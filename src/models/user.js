@@ -1,5 +1,24 @@
-export default (deps, configs) => {
-  const userSchema = new deps.mongoose.Schema(configs.model.user, { timestamps: true });
+export default (deps) => {
+  const userSchema = new deps.mongoose.Schema({
+    email: { type: String, unique: true },
+    password: String,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
+
+    facebook: String,
+    twitter: String,
+    google: String,
+    tokens: Array,
+
+    profile: {
+      name: String,
+      gender: String,
+      location: String,
+    },
+  }, {
+    timestamps: true,
+    collection: 'user',
+  });
 
   /**
    * Password hash middleware.
@@ -11,21 +30,17 @@ export default (deps, configs) => {
     }
 
     try {
-      const salt = await deps.util.promisify(deps.bcrypt.genSalt)(10);
-      const hash = await deps.util.promisify(deps.bcrypt.hash)(this.password, salt, undefined);
+      const salt = await deps.bcrypt.genSalt(10);
+      const hash = await deps.bcrypt.hash(this.password, salt, undefined);
       this.password = hash;
+      next();
     } catch (err) {
       next(err);
     }
   });
 
-  userSchema.methods.comparePassword = async function comparePassword(candidatePassword, cb) {
-    try {
-      const isMatch = await deps.util.promisify(deps.bcrypt.compare)(candidatePassword, this.password);
-      cb(null, isMatch);
-    } catch (err) {
-      cb(err, false);
-    }
+  userSchema.methods.verifyPassword = async function verifyPassword(password) {
+    return deps.bcrypt.compare(password, this.password);
   };
 
   return deps.mongoose.model('User', userSchema);

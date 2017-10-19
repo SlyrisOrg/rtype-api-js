@@ -1,18 +1,22 @@
+// ////////////// //
+// SERVER MODULES //
+// ////////////// //
+
+import http from 'http';
+import https from 'https';
+
 // //////////////// //
 // INTERNAL MODULES //
 // //////////////// //
 
-import crypto from 'crypto';
 import path from 'path';
-import http from 'http';
-import https from 'https';
 import fs from 'fs';
-import util from 'util';
 
 // //////////////// //
 // EXTERNAL MODULES //
 // //////////////// //
 
+import jwt from 'jsonwebtoken';
 import bodyParser from 'body-parser';
 import express from 'express';
 import helmet from 'helmet';
@@ -21,15 +25,18 @@ import winston from 'winston';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import passport from 'passport';
+import passportLocal from 'passport-local';
+import passportJwt from 'passport-jwt';
 import dotenv from 'dotenv';
+import expressValidator from 'express-validator';
 
 // ///////////// //
 // TIERS MODULES //
 // ///////////// //
 
 import configModule from './modules/config';
-import mongoModule from './modules/mongo';
 import loggerModule from './modules/logger';
+import passportModule from './modules/passport';
 
 // /////////// //
 // CONTROLLERS //
@@ -43,16 +50,31 @@ import userController from './controllers/user';
 
 import userModel from './models/user';
 
+// //////////////// //
+// INITIALS MODULES //
+// //////////////// //
+
+const config = configModule({ dotenv });
+const logger = loggerModule({ winston }, config);
+
+// ////////////////////// //
+// MONGOOSE CONFIGURATION //
+// ////////////////////// //
+
+mongoose.Promise = Promise;
+mongoose.connect(config.database.mongo.uri, { useMongoClient: true });
+
 // ///////////////////////////// //
 // APPLICATION MODULES INJECTION //
 // ///////////////////////////// //
 
-const config = configModule({ dotenv, fs });
+const User = userModel({ mongoose, bcrypt });
 
-const logger = loggerModule({ winston }, config);
-const mongo = mongoModule({ mongoose }, config);
+// ////////// //
+// INITIALIZE //
+// ////////// //
 
-const User = userModel({ util, mongoose, bcrypt }, config);
+passportModule({ passport, passportLocal, passportJwt }, { User }, config);
 
 // //////////////////// //
 // APPLICATION INSTANCE //
@@ -66,6 +88,13 @@ const app = express();
 
 app.use(helmet());
 app.use(morgan('combined', { stream: { write: message => logger.info(message) } }));
+app.use(passport.initialize());
+
+// ///////////// //
+// HELPER LAYERS //
+// ///////////// //
+
+app.use(expressValidator());
 
 // ///////////// //
 // PARSER LAYERS //
@@ -73,7 +102,7 @@ app.use(morgan('combined', { stream: { write: message => logger.info(message) } 
 
 app.use(bodyParser.json({
   type: '*/*',
-  verify: (req, res, buf) => {
+  verify: async (req) => {
     const signature = req.headers['x-hub-signature'];
 
     if (!signature) {
@@ -84,13 +113,10 @@ app.use(bodyParser.json({
       }
     } else {
       const elements = signature.split('=');
-      const signatureHash = elements[1];
-      const expectedHash = crypto
-        .createHmac('sha1', config.server.secret)
-        .update(buf)
-        .digest('hex');
+      const password = elements[1];
+      const isMatch = await bcrypt.compare(password, config.server.auth);
 
-      if (signatureHash !== expectedHash) {
+      if (!isMatch) {
         throw new Error("Couldn't validate the request signature");
       }
     }
@@ -114,13 +140,24 @@ app.use((error, req, res, next) => {
 // STATIC ENDPOINT //
 // /////////////// //
 
-app.use(express.static(path.resolve(process.cwd(), '/public')));
+app.use('/', express.static(path.resolve(process.cwd(), 'public')));
 
 // /////////////////// //
 // CONTROLLER ENDPOINT //
 // /////////////////// //
 
-app.use('/api/user', userController({ util, passport }, { logger }, { User })(express.Router()));
+app.use('/api/user', userController({ passport, logger, jwt }, { User }, config)(express.Router()));
+
+// //////////////// //
+// DEFAULT ENDPOINT //
+// //////////////// //
+
+app.use('*', (req, res) => {
+  res.json({
+    success: false,
+    payload: 'NOT_FOUND',
+  });
+});
 
 // ////////////////////// //
 // SERVER EVENTS LISTENER //

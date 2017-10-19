@@ -29,7 +29,8 @@ export default (deps) => {
     production: process.env.NODE_ENV === 'production',
     port: process.env.PORT,
     locale: process.env.LOCALE,
-    server: process.env.SECRET,
+    secret: process.env.SECRET,
+    auth: process.env.AUTH,
     ssl: {
       key: process.env.SSL_KEY,
       cert: process.env.SSL_CERTIFICAT,
@@ -49,29 +50,8 @@ export default (deps) => {
     },
   });
 
-  const model = {
-    user: {
-      email: { type: String, unique: true },
-      password: String,
-      passwordResetToken: String,
-      passwordResetExpires: Date,
-
-      facebook: String,
-      twitter: String,
-      google: String,
-      tokens: Array,
-
-      profile: {
-        name: String,
-        gender: String,
-        location: String,
-      },
-    },
-  };
-
   return {
     server,
     database,
-    model,
   };
 };

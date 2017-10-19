@@ -21,21 +21,26 @@
     "launch": "if-env NODE_ENV=production && npm run launch:prod || npm run launch:dev",
     "launch:dev": "nodemon --inspect src/index.js --exec babel-node",
     "launch:prod": "node dist",
-    "lint": "eslint src --fix",
+    "helper:lint": "eslint src --fix",
     "build": "npm run clear && babel src -d dist --copy-files",
-    "clear": "rimraf dist"
+    "clear": "rimraf dist",
+    "test": "snyk test"
   },
   "dependencies": {
     "bcrypt": "^1.0.3",
     "body-parser": "^1.15.2",
     "dotenv": "^4.0.0",
     "express": "^4.15.2",
+    "express-validator": "^4.2.1",
     "helmet": "^3.2.0",
     "if-env": "^1.0.0",
+    "jsonwebtoken": "^8.1.0",
     "mongodb": "^2.2.27",
     "mongoose": "^4.12.3",
     "morgan": "^1.8.1",
     "passport": "^0.4.0",
+    "passport-jwt": "^3.0.0",
+    "passport-local": "^1.0.0",
     "pm2": "^2.6.1",
     "rimraf": "^2.6.1",
     "winston": "^2.3.1"
