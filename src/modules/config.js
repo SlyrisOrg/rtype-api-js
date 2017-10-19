@@ -10,7 +10,8 @@ export default (deps) => {
   // /////// //
 
   const verify = (configs) => {
-    const errors = configs.filter(config => typeof config === 'undefined');
+    const errors = Object.keys(configs)
+      .filter(configIndex => typeof configs[configIndex] === 'undefined');
 
     if (errors.lenght) {
       throw new Error(`Error in configurations: ${errors}`);
