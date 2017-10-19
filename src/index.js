@@ -48,9 +48,9 @@ import userModel from './models/user';
 
 import * as configs from './configs';
 
-// /////////////////// //
-// APPLICATION MODULES //
-// /////////////////// //
+// ///////////////////////////// //
+// APPLICATION MODULES INJECTION //
+// ///////////////////////////// //
 
 const logger = loggerModule({ winston }, configs);
 const mongo = mongoModule({ mongoose }, configs);
@@ -151,7 +151,7 @@ const onErrorEvent = (err) => {
   }
 };
 
-const onListenEvent = (server) => {
+const onListenEvent = server => () => {
   const addr = server.address();
   const bind = _.isString(addr)
     ? `pipe ${addr}`
@@ -182,3 +182,29 @@ if (configs.server.production) {
   server.on('err', onErrorEvent);
   server.on('listening', onListenEvent(server));
 }
+
+// /////////////////// //
+// HANDLE PROCESS EXIT //
+// /////////////////// //
+
+const cleanExit = () => {
+  logger.info('Application exit');
+  process.exit(0);
+};
+
+process.on('SIGINT', cleanExit);
+process.on('SIGTERM', cleanExit);
+
+// ////////////////////// //
+// HANDLE PROCESS FAILURE //
+// ////////////////////// //
+
+process.on('uncaughtException', (err) => {
+  logger.error(`Caught exception: ${err}`);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, p) => {
+  logger.error(`Unhandled Rejection at: ${p} and reason: ${reason}`);
+  process.exit(1);
+});
