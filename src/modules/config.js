@@ -9,51 +9,14 @@ export default (deps) => {
   // HELPERS //
   // /////// //
 
-  const envConfigs = ['development', 'test', 'production'];
-
-  const normalizePort = (config) => {
-    const port = parseInt(config, 10);
-
-    if (isNaN(port)) {
-      return config;
-    }
-
-    if (port >= 0) {
-      return port;
-    }
-
-    return undefined;
-  };
-
-  const normalizeEnv = (config) => {
-    const error = config.find(element =>
-      !!envConfigs.includes(element));
-
-    if (!error) {
-      return config;
-    }
-
-    return undefined;
-  };
-
-  const normalizeLocal = config =>
-    config.length === 2;
-
-  const normalizeFile = (config) => {
-    if (deps.fs.existsSync(config.key) && deps.fs.existsSync(config.cert)) {
-      return config;
-    }
-    return undefined;
-  };
-
   const verify = (configs) => {
     const errors = configs.filter(config => typeof config === 'undefined');
 
     if (errors.lenght) {
-      return configs;
+      throw new Error(`Error in configurations: ${errors}`);
     }
 
-    throw new Error(`Error in configurations: ${errors}`);
+    return configs;
   };
 
   // /////////////////// //
@@ -61,14 +24,14 @@ export default (deps) => {
   // /////////////////// //
 
   const server = verify({
-    env: normalizeEnv(process.env.NODE_ENV),
-    production: process.env.NODE_ENV === envConfigs[2],
-    port: normalizePort(process.env.PORT),
-    locale: normalizeLocal(process.env.LOCALE),
+    env: process.env.NODE_ENV,
+    production: process.env.NODE_ENV === 'production',
+    port: process.env.PORT,
+    locale: process.env.LOCALE,
     server: process.env.SECRET,
     ssl: {
-      key: normalizeFile(process.env.SSL_KEY),
-      cert: normalizeFile(process.env.SSL_CERTIFICAT),
+      key: process.env.SSL_KEY,
+      cert: process.env.SSL_CERTIFICAT,
     },
   });
 
