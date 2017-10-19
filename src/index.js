@@ -34,6 +34,7 @@ import expressValidator from 'express-validator';
 // TIERS MODULES //
 // ///////////// //
 
+import appModule from './modules/app';
 import configModule from './modules/config';
 import loggerModule from './modules/logger';
 import passportModule from './modules/passport';
@@ -64,100 +65,39 @@ const logger = loggerModule({ winston }, config);
 mongoose.Promise = Promise;
 mongoose.connect(config.database.mongo.uri, { useMongoClient: true });
 
-// ///////////////////////////// //
-// APPLICATION MODULES INJECTION //
-// ///////////////////////////// //
+// ///////////////// //
+// MODULES INJECTION //
+// ///////////////// //
 
 const User = userModel({ mongoose, bcrypt });
+
+// ///////////////////// //
+// APPLICATION INJECTION //
+// ///////////////////// //
+
+const app = appModule({
+  express,
+  logger,
+  helmet,
+  morgan,
+  expressValidator,
+  passport,
+  bodyParser,
+}, {
+  user: userController({ passport, logger, jwt }, { User }, config)(express.Router()),
+}, config);
 
 // ////////// //
 // INITIALIZE //
 // ////////// //
 
-passportModule({ passport, passportLocal, passportJwt }, { User }, config);
-
-// //////////////////// //
-// APPLICATION INSTANCE //
-// //////////////////// //
-
-const app = express();
-
-// /////////////// //
-// SECURITY LAYERS //
-// /////////////// //
-
-app.use(helmet());
-app.use(morgan('combined', { stream: { write: message => logger.info(message) } }));
-app.use(passport.initialize());
-
-// ///////////// //
-// HELPER LAYERS //
-// ///////////// //
-
-app.use(expressValidator());
-
-// ///////////// //
-// PARSER LAYERS //
-// ///////////// //
-
-app.use(bodyParser.json({
-  type: '*/*',
-  verify: async (req) => {
-    const signature = req.headers['x-hub-signature'];
-
-    if (!signature) {
-      if (config.server.production) {
-        throw new Error("Couldn't find the signature");
-      } else {
-        logger.warn("Couldn't find the signature");
-      }
-    } else {
-      const elements = signature.split('=');
-      const password = elements[1];
-      const isMatch = await bcrypt.compare(password, config.server.auth);
-
-      if (!isMatch) {
-        throw new Error("Couldn't validate the request signature");
-      }
-    }
-  },
-}));
-app.use(bodyParser.urlencoded({ extended: true, defer: true }));
-
-// ///////////// //
-// ERROR CATCHER //
-// ///////////// //
-
-app.use((error, req, res, next) => {
-  if (error instanceof SyntaxError) {
-    logger.error('Bad format request');
-  } else {
-    next();
-  }
-});
-
-// /////////////// //
-// STATIC ENDPOINT //
-// /////////////// //
-
-app.use('/', express.static(path.resolve(process.cwd(), 'public')));
-
-// /////////////////// //
-// CONTROLLER ENDPOINT //
-// /////////////////// //
-
-app.use('/api/user', userController({ passport, logger, jwt }, { User }, config)(express.Router()));
-
-// //////////////// //
-// DEFAULT ENDPOINT //
-// //////////////// //
-
-app.use('*', (req, res) => {
-  res.json({
-    success: false,
-    payload: 'NOT_FOUND',
-  });
-});
+passportModule({
+  passport,
+  passportLocal,
+  passportJwt,
+}, {
+  User,
+}, config);
 
 // ////////////////////// //
 // SERVER EVENTS LISTENER //
