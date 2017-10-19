@@ -13,7 +13,6 @@ import util from 'util';
 // EXTERNAL MODULES //
 // //////////////// //
 
-import _ from 'lodash';
 import bodyParser from 'body-parser';
 import express from 'express';
 import helmet from 'helmet';
@@ -22,6 +21,7 @@ import winston from 'winston';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import passport from 'passport';
+import dotenv from 'dotenv';
 
 // ///////////// //
 // TIERS MODULES //
@@ -46,16 +46,18 @@ import userModel from './models/user';
 // CONFIGURATIONS //
 // ////////////// //
 
-import * as configs from './configs';
+import configModule from './modules/config';
 
 // ///////////////////////////// //
 // APPLICATION MODULES INJECTION //
 // ///////////////////////////// //
 
-const logger = loggerModule({ winston }, configs);
-const mongo = mongoModule({ mongoose }, configs);
+const config = configModule({ dotenv, fs });
 
-const User = userModel({ util, mongoose, bcrypt }, configs);
+const logger = loggerModule({ winston }, config);
+const mongo = mongoModule({ mongoose }, config);
+
+const User = userModel({ util, mongoose, bcrypt }, config);
 
 // //////////////////// //
 // APPLICATION INSTANCE //
@@ -80,7 +82,7 @@ app.use(bodyParser.json({
     const signature = req.headers['x-hub-signature'];
 
     if (!signature) {
-      if (configs.server.production) {
+      if (config.server.production) {
         throw new Error("Couldn't find the signature");
       } else {
         logger.warn("Couldn't find the signature");
@@ -89,7 +91,7 @@ app.use(bodyParser.json({
       const elements = signature.split('=');
       const signatureHash = elements[1];
       const expectedHash = crypto
-        .createHmac('sha1', configs.server.secret)
+        .createHmac('sha1', config.server.secret)
         .update(buf)
         .digest('hex');
 
@@ -130,16 +132,16 @@ app.use('/api/user', userController({ util, passport }, { logger }, { User })(ex
 // ////////////////////// //
 
 const onStartEvent = () =>
-  logger.info(`Application launched on ${configs.server.env}`);
+  logger.info(`Application launched on ${config.server.env}`);
 
 const onErrorEvent = (err) => {
   if (err.syscall !== 'listen') {
     throw new Error(err);
   }
 
-  const bind = _.isString(configs.server.port)
-    ? `Pipe ${configs.server.port}`
-    : `Port ${configs.server.port}`;
+  const bind = typeof config.server.port === 'string'
+    ? `Pipe ${config.server.port}`
+    : `Port ${config.server.port}`;
 
   switch (err.code) {
     case 'EACCES':
@@ -153,7 +155,7 @@ const onErrorEvent = (err) => {
 
 const onListenEvent = server => () => {
   const addr = server.address();
-  const bind = _.isString(addr)
+  const bind = typeof addr === 'string'
     ? `pipe ${addr}`
     : `port ${addr.port}`;
   logger.info(`Application listening on ${bind}`);
@@ -163,22 +165,22 @@ const onListenEvent = server => () => {
 // SERVER INSTANCE //
 // /////////////// //
 
-if (configs.server.production) {
+if (config.server.production) {
   const ssl = {
-    key: fs.readFileSync(configs.server.ssl.key),
-    cert: fs.readFileSync(configs.server.ssl.cert),
+    key: fs.readFileSync(config.server.ssl.key),
+    cert: fs.readFileSync(config.server.ssl.cert),
   };
 
   const instanse = http.createServer(app);
   const server = https.createServer(ssl, instanse);
 
-  server.listen(configs.server.port, onStartEvent);
+  server.listen(config.server.port, onStartEvent);
   server.on('err', onErrorEvent);
   server.on('listening', onListenEvent(server));
 } else {
   const server = http.createServer(app);
 
-  server.listen(configs.server.port, onStartEvent);
+  server.listen(config.server.port, onStartEvent);
   server.on('err', onErrorEvent);
   server.on('listening', onListenEvent(server));
 }
