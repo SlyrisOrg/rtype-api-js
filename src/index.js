@@ -1,18 +1,61 @@
+// //////////////// //
+// INTERNAL MODULES //
+// //////////////// //
+
 import crypto from 'crypto';
 import path from 'path';
 import http from 'http';
 import https from 'https';
 import fs from 'fs';
+import util from 'util';
+
+// //////////////// //
+// EXTERNAL MODULES //
+// //////////////// //
 
 import _ from 'lodash';
 import bodyParser from 'body-parser';
 import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import winston from 'winston';
+import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
+import passport from 'passport';
 
-import * as modules from './modules';
-import * as controllers from './controllers';
+// ///////////// //
+// TIERS MODULES //
+// ///////////// //
+
+import mongoModule from './modules/mongo';
+import loggerModule from './modules/logger';
+
+// /////////// //
+// CONTROLLERS //
+// /////////// //
+
+import userController from './controllers/user';
+
+// ////// //
+// MODELS //
+// ////// //
+
+import userModel from './models/user';
+
+// ////////////// //
+// CONFIGURATIONS //
+// ////////////// //
+
 import * as configs from './configs';
+
+// /////////////////// //
+// APPLICATION MODULES //
+// /////////////////// //
+
+const logger = loggerModule({ winston }, configs);
+const mongo = mongoModule({ mongoose }, configs);
+
+const User = userModel({ util, mongoose, bcrypt }, configs);
 
 // //////////////////// //
 // APPLICATION INSTANCE //
@@ -25,7 +68,7 @@ const app = express();
 // /////////////// //
 
 app.use(helmet());
-app.use(morgan('combined', { stream: { write: message => modules.logger.info(message) } }));
+app.use(morgan('combined', { stream: { write: message => logger.info(message) } }));
 
 // ///////////// //
 // PARSER LAYERS //
@@ -40,7 +83,7 @@ app.use(bodyParser.json({
       if (configs.server.production) {
         throw new Error("Couldn't find the signature");
       } else {
-        modules.logger.warn("Couldn't find the signature");
+        logger.warn("Couldn't find the signature");
       }
     } else {
       const elements = signature.split('=');
@@ -64,7 +107,7 @@ app.use(bodyParser.urlencoded({ extended: true, defer: true }));
 
 app.use((error, req, res, next) => {
   if (error instanceof SyntaxError) {
-    modules.logger.error('Bad format request');
+    logger.error('Bad format request');
   } else {
     next();
   }
@@ -80,14 +123,14 @@ app.use(express.static(path.resolve(process.cwd(), '/public')));
 // CONTROLLER ENDPOINT //
 // /////////////////// //
 
-app.use('/api/user', controllers.user(express.Router()));
+app.use('/api/user', userController({ util, passport }, { logger }, { User })(express.Router()));
 
 // ////////////////////// //
 // SERVER EVENTS LISTENER //
 // ////////////////////// //
 
 const onStartEvent = () =>
-  modules.logger.info(`Application launched on ${configs.server.env}`);
+  logger.info(`Application launched on ${configs.server.env}`);
 
 const onErrorEvent = (err) => {
   if (err.syscall !== 'listen') {
@@ -113,7 +156,7 @@ const onListenEvent = (server) => {
   const bind = _.isString(addr)
     ? `pipe ${addr}`
     : `port ${addr.port}`;
-  modules.logger.info(`Application listening on ${bind}`);
+  logger.info(`Application listening on ${bind}`);
 };
 
 // /////////////// //
