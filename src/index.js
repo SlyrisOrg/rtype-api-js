@@ -62,8 +62,23 @@ import userModel from './models/user';
 // INITIALS MODULES //
 // //////////////// //
 
-const config = configCore({ dotenv });
-const logger = loggerCore({ winston }, config);
+const config = configCore({
+  dotenv,
+}, {
+  payload: {
+    notFound: 'NOT_FOUND',
+    internalError: 'INTERNAL_ERROR',
+    badFormat: 'BAD_FORMAT',
+    userSigninSuccess: 'USER_SUCCESS_SIGIN',
+    userSigninFail: 'USER_FAIL_SIGIN',
+    userSignupSuccess: 'USER_SUCCESS_SIGNUP',
+    userSignupFail: 'USER_FAIL_SIGNUP',
+  },
+});
+
+const logger = loggerCore({
+  winston,
+}, config);
 
 // ////////////////////// //
 // MONGOOSE CONFIGURATION //
@@ -104,15 +119,13 @@ const app = appCore({
   bodyParser,
   path,
 }, {
-  api: {
-    user: userController({
-      passport,
-      logger,
-      jwt,
-    }, {
-      User,
-    }, config)(express.Router()),
-  },
+  '/api/user': userController({
+    passport,
+    logger,
+    jwt,
+  }, {
+    User,
+  }, config)(express.Router()),
 }, config);
 
 // ////// //

@@ -3,7 +3,7 @@ const postSignin = (deps, models, configs) => async (req, res, next) => {
     if (err) {
       res.json({
         success: false,
-        payload: 'INTERNAL_ERROR',
+        payload: configs.payload.internalError,
       });
       return;
     }
@@ -11,14 +11,14 @@ const postSignin = (deps, models, configs) => async (req, res, next) => {
     if (!user) {
       res.json({
         success: false,
-        payload: 'USER_FAIL_SIGIN',
+        payload: configs.payload.userSigninFail,
       });
       return;
     }
 
     res.json({
       success: true,
-      payload: 'USER_SUCCESS_SIGIN',
+      payload: configs.payload.userSigninSuccess,
       content: {
         token: deps.jwt.sign({
           id: user._id,
@@ -30,7 +30,7 @@ const postSignin = (deps, models, configs) => async (req, res, next) => {
   })(req, res, next);
 };
 
-const postSignup = (deps, models) => async (req, res) => {
+const postSignup = (deps, models, configs) => async (req, res) => {
   req.assert('email', 'Email is not valid').isEmail();
   req.assert('password', 'Password must be at least 4 characters long').len({ min: 4 });
   req.sanitize('email').normalizeEmail({ gmail_remove_dots: false });
@@ -40,7 +40,7 @@ const postSignup = (deps, models) => async (req, res) => {
   if (errors.length) {
     res.json({
       success: false,
-      payload: 'BAD_FORMAT',
+      payload: configs.payload.badFormat,
     });
     return;
   }
@@ -55,7 +55,7 @@ const postSignup = (deps, models) => async (req, res) => {
     if (existingUser) {
       res.json({
         success: false,
-        payload: 'USER_FAIL_SIGNUP',
+        payload: configs.payload.userSignupFail,
       });
       return;
     }
@@ -63,19 +63,19 @@ const postSignup = (deps, models) => async (req, res) => {
     await user.save();
     res.json({
       success: true,
-      payload: 'USER_SUCCESS_SIGNUP',
+      payload: configs.payload.userSignupSuccess,
     });
   } catch (err) {
     deps.logger.error(`Register failure: ${err}`);
     res.json({
       success: false,
-      payload: 'INTERNAL_ERROR',
+      payload: configs.payload.internalError,
     });
   }
 };
 
 export default (deps, models, configs) => (router) => {
   router.post('/signin', postSignin(deps, models, configs));
-  router.post('/signup', postSignup(deps, models));
+  router.post('/signup', postSignup(deps, models, configs));
   return router;
 };

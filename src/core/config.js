@@ -1,4 +1,4 @@
-export default (deps) => {
+export default (deps, configs) => {
   // ////// //
   // DOTENV //
   // ////// //
@@ -50,8 +50,15 @@ export default (deps) => {
     },
   });
 
+  // /////////////////////// //
+  // PAYLOADS CONFIGURATIONS //
+  // /////////////////////// //
+
+  const payload = verify(configs.payload);
+
   return {
     server,
     database,
+    payload,
   };
 };

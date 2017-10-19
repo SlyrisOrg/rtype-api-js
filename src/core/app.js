@@ -65,7 +65,9 @@ export default (deps, routes, configs) => {
   // CONTROLLER ENDPOINT //
   // /////////////////// //
 
-  app.use('/api/user', routes.api.user);
+  Object.keys(routes).forEach((url) => {
+    app.use(url, routes[url]);
+  });
 
   // //////////////// //
   // DEFAULT ENDPOINT //
@@ -74,7 +76,7 @@ export default (deps, routes, configs) => {
   app.use('*', (req, res) => {
     res.json({
       success: false,
-      payload: 'NOT_FOUND',
+      payload: configs.payload.notFound,
     });
   });
 
