@@ -77,4 +77,6 @@ export default (deps, routes, configs) => {
       payload: 'NOT_FOUND',
     });
   });
+
+  return app;
 };

@@ -1,5 +1,5 @@
 import request from 'supertest';
-import app from '../src';
+import app from '../src/core/app';
 
 describe('API routes test', () => {
   test('It should response the GET method', async (done) => {

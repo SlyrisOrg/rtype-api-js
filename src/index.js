@@ -31,13 +31,20 @@ import dotenv from 'dotenv';
 import expressValidator from 'express-validator';
 
 // ///////////// //
+// CORE MODULES //
+// ///////////// //
+
+import appCore from './core/app';
+import serverCore from './core/server';
+import processCore from './core/process';
+import configCore from './core/config';
+import loggerCore from './core/logger';
+
+// ///////////// //
 // TIERS MODULES //
 // ///////////// //
 
-import appModule from './modules/app';
-import configModule from './modules/config';
-import loggerModule from './modules/logger';
-import passportModule from './modules/passport';
+import userModule from './modules/user';
 
 // /////////// //
 // CONTROLLERS //
@@ -55,8 +62,8 @@ import userModel from './models/user';
 // INITIALS MODULES //
 // //////////////// //
 
-const config = configModule({ dotenv });
-const logger = loggerModule({ winston }, config);
+const config = configCore({ dotenv });
+const logger = loggerCore({ winston }, config);
 
 // ////////////////////// //
 // MONGOOSE CONFIGURATION //
@@ -65,33 +72,17 @@ const logger = loggerModule({ winston }, config);
 mongoose.Promise = Promise;
 mongoose.connect(config.database.mongo.uri, { useMongoClient: true });
 
-// ///////////////// //
-// MODULES INJECTION //
-// ///////////////// //
+// ////// //
+// MODELS //
+// ////// //
 
 const User = userModel({ mongoose, bcrypt });
 
-// ///////////////////// //
-// APPLICATION INJECTION //
-// ///////////////////// //
+// ////////////////////// //
+// PASSPORT CONFIGURATION //
+// ////////////////////// //
 
-const app = appModule({
-  express,
-  logger,
-  helmet,
-  morgan,
-  expressValidator,
-  passport,
-  bodyParser,
-}, {
-  user: userController({ passport, logger, jwt }, { User }, config)(express.Router()),
-}, config);
-
-// ////////// //
-// INITIALIZE //
-// ////////// //
-
-passportModule({
+userModule({
   passport,
   passportLocal,
   passportJwt,
@@ -99,86 +90,47 @@ passportModule({
   User,
 }, config);
 
-// ////////////////////// //
-// SERVER EVENTS LISTENER //
-// ////////////////////// //
+// /////////// //
+// APPLICATION //
+// /////////// //
 
-const onStartEvent = () =>
-  logger.info(`Application launched on ${config.server.env}`);
+const app = appCore({
+  express,
+  logger,
+  helmet,
+  morgan,
+  expressValidator,
+  passport,
+  bodyParser,
+  path,
+}, {
+  api: {
+    user: userController({
+      passport,
+      logger,
+      jwt,
+    }, {
+      User,
+    }, config)(express.Router()),
+  },
+}, config);
 
-const onErrorEvent = (err) => {
-  if (err.syscall !== 'listen') {
-    throw new Error(err);
-  }
+// ////// //
+// Server //
+// ////// //
 
-  const bind = typeof config.server.port === 'string'
-    ? `Pipe ${config.server.port}`
-    : `Port ${config.server.port}`;
+serverCore({
+  fs,
+  logger,
+  http,
+  https,
+  app,
+}, config);
 
-  switch (err.code) {
-    case 'EACCES':
-      throw new Error(`${bind} port requires elevated privileges`);
-    case 'EADDRINUSE':
-      throw new Error(`${bind} port is already in use`);
-    default:
-      throw err;
-  }
-};
+// /////// //
+// PROCESS //
+// /////// //
 
-const onListenEvent = server => () => {
-  const addr = server.address();
-  const bind = typeof addr === 'string'
-    ? `pipe ${addr}`
-    : `port ${addr.port}`;
-  logger.info(`Application listening on ${bind}`);
-};
-
-// /////////////// //
-// SERVER INSTANCE //
-// /////////////// //
-
-if (config.server.production) {
-  const ssl = {
-    key: fs.readFileSync(config.server.ssl.key),
-    cert: fs.readFileSync(config.server.ssl.cert),
-  };
-
-  const instanse = http.createServer(app);
-  const server = https.createServer(ssl, instanse);
-
-  server.listen(config.server.port, onStartEvent);
-  server.on('err', onErrorEvent);
-  server.on('listening', onListenEvent(server));
-} else {
-  const server = http.createServer(app);
-
-  server.listen(config.server.port, onStartEvent);
-  server.on('err', onErrorEvent);
-  server.on('listening', onListenEvent(server));
-}
-
-// /////////////////// //
-// HANDLE PROCESS EXIT //
-// /////////////////// //
-
-const cleanExit = () => {
-  logger.info('Application exit');
-  process.exit(0);
-};
-
-process.on('SIGINT', cleanExit);
-process.on('SIGTERM', cleanExit);
-
-// ////////////////////// //
-// HANDLE PROCESS FAILURE //
-// ////////////////////// //
-
-process.on('uncaughtException', (err) => {
-  logger.error(`Caught exception: ${err}`);
-  process.exit(1);
-});
-
-process.on('unhandledRejection', (reason, p) => {
-  logger.error(`Unhandled Rejection at: ${p} and reason: ${reason}`);
-  process.exit(1);
+processCore({
+  logger,
 });
