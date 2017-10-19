@@ -27,6 +27,7 @@ import dotenv from 'dotenv';
 // TIERS MODULES //
 // ///////////// //
 
+import configModule from './modules/config';
 import mongoModule from './modules/mongo';
 import loggerModule from './modules/logger';
 
@@ -41,12 +42,6 @@ import userController from './controllers/user';
 // ////// //
 
 import userModel from './models/user';
-
-// ////////////// //
-// CONFIGURATIONS //
-// ////////////// //
-
-import configModule from './modules/config';
 
 // ///////////////////////////// //
 // APPLICATION MODULES INJECTION //
