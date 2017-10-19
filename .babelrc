@@ -1,0 +1,19 @@
+{
+  "presets": [
+    ["env", {
+      "targets": {
+        "node": "current"
+      }
+    }]
+  ],
+  "plugins": [
+    "transform-object-rest-spread",
+    "dynamic-import-node",
+    "transform-class-properties",
+    "transform-function-bind"
+  ],
+  "ignore": [
+    "node_modules"
+  ],
+  "comments": false
+}

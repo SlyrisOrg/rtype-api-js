@@ -1,0 +1,57 @@
+{
+  "name": "r-type_api",
+  "version": "0.0.1",
+  "description": "R type game server api",
+  "keywords": [
+    "api",
+    "game"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://git-codecommit.eu-west-1.amazonaws.com/v1/repos/twitter.git"
+  },
+  "main": "src/index.js",
+  "author": "Phetsinorath 'Shikanime Willian <shikalegend@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
+    "start:dev": "npm run launch:dev",
+    "start:prod": "node dist",
+    "launch": "if-env NODE_ENV=production && npm run launch:prod || npm run launch:dev",
+    "launch:dev": "nodemon --inspect src/index.js --exec babel-node",
+    "launch:prod": "node dist",
+    "lint": "eslint src --fix",
+    "build": "npm run clear && babel src -d dist --copy-files",
+    "clear": "rimraf dist"
+  },
+  "dependencies": {
+    "bcrypt": "^1.0.3",
+    "body-parser": "^1.15.2",
+    "dotenv": "^4.0.0",
+    "express": "^4.15.2",
+    "helmet": "^3.2.0",
+    "if-env": "^1.0.0",
+    "lodash": "^4.17.4",
+    "mongodb": "^2.2.27",
+    "mongoose": "^4.12.3",
+    "morgan": "^1.8.1",
+    "passport": "^0.4.0",
+    "pm2": "^2.6.1",
+    "rimraf": "^2.6.1",
+    "winston": "^2.3.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-dynamic-import-node": "^1.1.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-function-bind": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-preset-env": "^1.6.0",
+    "eslint": "^4.7.2",
+    "eslint-config-airbnb-base": "^12.0.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.1.1",
+    "nodemon": "^1.11.0"
+  }
+}
