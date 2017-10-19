@@ -36,7 +36,6 @@ import expressValidator from 'express-validator';
 
 import appCore from './core/app';
 import serverCore from './core/server';
-import processCore from './core/process';
 import configCore from './core/config';
 import loggerCore from './core/logger';
 
@@ -139,11 +138,3 @@ serverCore({
   https,
   app,
 }, config);
-
-// /////// //
-// PROCESS //
-// /////// //
-
-processCore({
-  logger,
-});
