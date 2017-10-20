@@ -12,7 +12,7 @@ describe('General API alive test', () => {
 
 describe('Register API route', () => {
   test('It should respond with success result', async (done) => {
-    const res = await request(app).get('/');
+    const res = await request(app).post('/api/login');
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({ success: false, payload: 'NOT_FOUND' });
     done();
