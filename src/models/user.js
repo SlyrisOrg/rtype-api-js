@@ -20,9 +20,6 @@ export default (deps) => {
     collection: 'user',
   });
 
-  /**
-   * Password hash middleware.
-   */
   userSchema.pre('save', async function save(next) {
     if (!this.isModified('password')) {
       next();
