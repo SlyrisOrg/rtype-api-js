@@ -23,7 +23,7 @@
     "beta:launch:dev": "pm2 start --interpreter ./node_modules/.bin/babel-node ./src/index.js --watch --name app",
     "launch:prod": "node dist",
     "helper:lint": "eslint src --fix",
-    "helper:test": "jest",
+    "helper:test": "jest test",
     "helper:clear": "rimraf dist",
     "helper:security": "snyk test",
     "build": "npm run clear && babel src -d dist --copy-files"

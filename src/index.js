@@ -66,19 +66,19 @@ const config = configCore({
 }, {
   payload: {
     system: {
-      notFound: { id: 0, payload: 'NOT_FOUND' },
-      internalError: { id: 1, payload: 'INTERNAL_ERROR' },
+      notFound: { id: 0, name: 'NOT_FOUND' },
+      internalError: { id: 1, name: 'INTERNAL_ERROR' },
     },
     format: {
-      emailEmpty: { id: 2, payload: 'USER_EMAIL_EMPTY' },
-      emailBadFormat: { id: 3, payload: 'USER_EMAIL_BAD_FORMAT' },
-      passwordLenght: { id: 4, payload: 'USER_PASSWORD_EMPTY' },
+      emailEmpty: { id: 2, name: 'USER_EMAIL_EMPTY' },
+      emailBadFormat: { id: 3, name: 'USER_EMAIL_BAD_FORMAT' },
+      passwordLenght: { id: 4, name: 'USER_PASSWORD_EMPTY' },
     },
     user: {
-      signinSuccess: { id: 5, payload: 'USER_SUCCESS_SIGIN' },
-      signinFail: { id: 6, payload: 'USER_FAIL_SIGIN' },
-      signupSuccess: { id: 7, payload: 'USER_SUCCESS_SIGNUP' },
-      signupFail: { id: 8, payload: 'USER_FAIL_SIGNUP' },
+      signinSuccess: { id: 5, name: 'USER_SUCCESS_SIGIN' },
+      signinFail: { id: 6, name: 'USER_FAIL_SIGIN' },
+      signupSuccess: { id: 7, name: 'USER_SUCCESS_SIGNUP' },
+      signupFail: { id: 8, name: 'USER_FAIL_SIGNUP' },
     },
   },
 });
@@ -146,3 +146,5 @@ serverCore({
   https,
   app,
 }, config);
+
+export default app;
