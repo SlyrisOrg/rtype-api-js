@@ -12,7 +12,7 @@
   },
   "main": "src/index.js",
   "author": "Phetsinorath 'Shikanime Willian <shikalegend@gmail.com>",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "private": true,
   "scripts": {
     "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
