@@ -1,9 +1,26 @@
 const signin = (deps, models, configs) => async (req, res, next) => {
+  req.assert('email', configs.payload.emailBadFormat.id).isEmail();
+  req.assert('email', configs.payload.emailEmpty.id).notEmpty();
+  req.assert('password', configs.payload.passwordLenght.id).isLength({ min: 4, max: 16 });
+  req.sanitize('email').normalizeEmail({ gmail_remove_dots: false });
+
+  const errors = req.validationErrors();
+
+  if (errors.length) {
+    const allErrors = errors.map(e => e.msg);
+
+    res.json({
+      success: false,
+      payload: allErrors[0],
+    });
+    return;
+  }
+
   deps.passport.authenticate('local', { session: false }, (err, user) => {
     if (err) {
       res.json({
         success: false,
-        payload: configs.payload.internalError,
+        payload: configs.payload.internalError.id,
       });
       return;
     }
@@ -11,14 +28,14 @@ const signin = (deps, models, configs) => async (req, res, next) => {
     if (!user) {
       res.json({
         success: false,
-        payload: configs.payload.userSigninFail,
+        payload: configs.payload.userSigninFail.id,
       });
       return;
     }
 
     res.json({
       success: true,
-      payload: configs.payload.userSigninSuccess,
+      payload: configs.payload.userSigninSuccess.id,
       content: {
         token: deps.jwt.sign({
           id: user._id,
@@ -55,7 +72,7 @@ const signup = (deps, models, configs) => async (req, res) => {
     if (existingUser) {
       res.json({
         success: false,
-        payload: configs.payload.userSignupFail,
+        payload: configs.payload.userSignupFail.id,
       });
       return;
     }
@@ -63,13 +80,13 @@ const signup = (deps, models, configs) => async (req, res) => {
     await user.save();
     res.json({
       success: true,
-      payload: configs.payload.userSignupSuccess,
+      payload: configs.payload.userSignupSuccess.id,
     });
   } catch (err) {
     deps.logger.error(`Register failure: ${err}`);
     res.json({
       success: false,
-      payload: configs.payload.internalError,
+      payload: configs.payload.internalError.id,
     });
   }
 };
@@ -79,7 +96,7 @@ const getUserData = (deps, models, configs) => (req, res, next) => {
     if (err) {
       res.json({
         success: false,
-        payload: configs.payload.internalError,
+        payload: configs.payload.internalError.id,
       });
       return;
     }

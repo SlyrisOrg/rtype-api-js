@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    environment:
+      - NODE_ENV=development
+      - PORT=8080
+      - LOCALE=fr
+      - AUTH=$$2a$$10$$tZtWUXI2gPsGXrPJFBfDvuqQNggNHISGphFOBAJACHXcETWDZ1pr6
+      - SECRET=123456
+      - SSL_KEY=
+      - SSL_CERTIFICAT=
+      - MONGO_URI=mongodb://database/
+      - MONGO_USERS_COLLECTION=users
+    ports:
+      - 443:443
+    restart: always
+
+  database:
+    image: mongo
+    restart: always

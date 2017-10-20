@@ -9,15 +9,15 @@ export default (deps, configs) => {
   // HELPERS //
   // /////// //
 
-  const verify = (configs) => {
-    const errors = Object.keys(configs)
-      .filter(configIndex => typeof configs[configIndex] === 'undefined');
+  const verify = (configsToVerify) => {
+    const errors = Object.keys(configsToVerify)
+      .filter(configIndex => typeof configsToVerify[configIndex] === 'undefined');
 
     if (errors.lenght) {
       throw new Error(`Error in configurations: ${errors}`);
     }
 
-    return configs;
+    return configsToVerify;
   };
 
   // /////////////////// //

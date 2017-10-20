@@ -65,13 +65,15 @@ const config = configCore({
   dotenv,
 }, {
   payload: {
-    notFound: 'NOT_FOUND',
-    internalError: 'INTERNAL_ERROR',
-    badFormat: 'BAD_FORMAT',
-    userSigninSuccess: 'USER_SUCCESS_SIGIN',
-    userSigninFail: 'USER_FAIL_SIGIN',
-    userSignupSuccess: 'USER_SUCCESS_SIGNUP',
-    userSignupFail: 'USER_FAIL_SIGNUP',
+    notFound: { id: 0, payload: 'NOT_FOUND' },
+    internalError: { id: 1, payload: 'INTERNAL_ERROR' },
+    emailEmpty: { id: 2, payload: 'USER_EMAIL_EMPTY' },
+    emailBadFormat: { id: 3, payload: 'USER_EMAIL_BAD_FORMAT' },
+    passwordLenght: { id: 4, payload: 'USER_PASSWORD_EMPTY' },
+    userSigninSuccess: { id: 5, payload: 'USER_SUCCESS_SIGIN' },
+    userSigninFail: { id: 6, payload: 'USER_FAIL_SIGIN' },
+    userSignupSuccess: { id: 7, payload: 'USER_SUCCESS_SIGNUP' },
+    userSignupFail: { id: 8, payload: 'USER_FAIL_SIGNUP' },
   },
 });
 
