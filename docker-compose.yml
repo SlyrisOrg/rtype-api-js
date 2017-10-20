@@ -5,8 +5,8 @@ services:
     build: .
     environment:
       - NODE_ENV=development
-      - PORT=8080
-      - LOCALE=fr
+      - PORT=443
+      - LOCALE=en
       - AUTH=$$2a$$10$$tZtWUXI2gPsGXrPJFBfDvuqQNggNHISGphFOBAJACHXcETWDZ1pr6
       - SECRET=123456
       - SSL_KEY=

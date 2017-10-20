@@ -17,9 +17,9 @@
   "scripts": {
     "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
     "start:dev": "npm run launch:dev",
-    "start:prod": "npm run build && node dist",
+    "start:prod": "npm run build && npm run launch:prod",
     "launch": "if-env NODE_ENV=production && npm run launch:prod || npm run launch:dev",
-    "launch:dev": "nodemon --inspect src/index.js --exec babel-node",
+    "launch:dev": "pm2 start --interpreter ./node_modules/.bin/babel-node ./src/index.js --watch --name app",
     "launch:prod": "node dist",
     "helper:lint": "eslint src --fix",
     "helper:test": "jest",
