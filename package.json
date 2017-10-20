@@ -19,7 +19,7 @@
     "start:dev": "npm run launch:dev",
     "start:prod": "npm run build && npm run launch:prod",
     "launch": "if-env NODE_ENV=production && npm run launch:prod || npm run launch:dev",
-    "lauch:dev": "nodemon --inspect src/index.js --exec babel-node",
+    "launch:dev": "nodemon --inspect src/index.js --exec babel-node",
     "beta:launch:dev": "pm2 start --interpreter ./node_modules/.bin/babel-node ./src/index.js --watch --name app",
     "launch:prod": "node dist",
     "helper:lint": "eslint src --fix",
@@ -60,6 +60,7 @@
     "eslint-plugin-node": "^5.1.1",
     "jest": "^21.2.1",
     "rimraf": "^2.6.1",
+    "nodemon": "^1.12.1",
     "supertest": "^3.0.0"
   }
 }
