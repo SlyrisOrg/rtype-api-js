@@ -76,7 +76,7 @@ export default (deps, routes, configs) => {
   app.use('*', (req, res) => {
     res.json({
       success: false,
-      payload: configs.payload.notFound,
+      payload: configs.payload.system.notFound,
     });
   });
 
