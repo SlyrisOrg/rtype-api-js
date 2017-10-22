@@ -1,8 +1,10 @@
 const signin = (deps, models, configs) => async (req, res, next) => {
-  req.assert('email', configs.payload.format.emailBadFormat).isEmail();
-  req.assert('email', configs.payload.format.emailEmpty).notEmpty();
-  req.assert('password', configs.payload.format.passwordLenght).isLength({ min: 4, max: 16 });
-  req.sanitize('email').normalizeEmail({ gmail_remove_dots: false });
+  req.assert('pseudo', configs.payload.format.pseudo.empty).notEmpty();
+  req.assert('pseudo', configs.payload.format.pseudo.badFormat).isLength({ min: 3, max: 20 });
+  req.assert('pseudo', configs.payload.format.pseudo.badFormat).isAlphanumeric();
+
+  req.assert('password', configs.payload.format.password.empty).notEmpty();
+  req.assert('password', configs.payload.format.password.badFormat).isLength({ min: 4, max: 16 });
 
   const errors = req.validationErrors();
 
@@ -28,29 +30,37 @@ const signin = (deps, models, configs) => async (req, res, next) => {
     if (!user) {
       res.json({
         success: false,
-        payload: configs.payload.user.signinFail,
+        payload: configs.payload.user.signin.fail,
       });
       return;
     }
 
     res.json({
       success: true,
-      payload: configs.payload.user.signinSuccess,
+      payload: configs.payload.user.signin.success,
       content: {
+        new: user.new,
         token: deps.jwt.sign({
           id: user._id,
         }, configs.server.secret, {
           expiresIn: 48 * 60 * 60,
         }),
+        user: user.profile,
       },
     });
   })(req, res, next);
 };
 
 const signup = (deps, models, configs) => async (req, res) => {
-  req.assert('email', configs.payload.format.emailBadFormat).isEmail();
-  req.assert('email', configs.payload.format.emailEmpty).notEmpty();
-  req.assert('password', configs.payload.format.passwordLenght).isLength({ min: 4, max: 16 });
+  req.assert('pseudo', configs.payload.format.pseudo.empty).notEmpty();
+  req.assert('pseudo', configs.payload.format.pseudo.badFormat).isLength({ min: 3, max: 20 });
+  req.assert('pseudo', configs.payload.format.pseudo.badFormat).isAlphanumeric();
+
+  req.assert('password', configs.payload.format.password.empty).notEmpty();
+  req.assert('password', configs.payload.format.password.badFormat).isLength({ min: 4, max: 16 });
+
+  req.assert('email', configs.payload.format.email.empty).notEmpty();
+  req.assert('email', configs.payload.format.email.badFormat).isEmail();
   req.sanitize('email').normalizeEmail({ gmail_remove_dots: false });
 
   const errors = req.validationErrors();
@@ -66,16 +76,23 @@ const signup = (deps, models, configs) => async (req, res) => {
   }
 
   const user = new models.User({
+    pseudo: req.body.pseudo,
     email: req.body.email,
     password: req.body.password,
   });
 
   try {
-    const existingUser = await models.User.findOne({ email: req.body.email });
+    const existingUser = await models.User.findOne({
+      $or: [
+        { pseudo: req.body.pseudo },
+        { email: req.body.email },
+      ],
+    });
+
     if (existingUser) {
       res.json({
         success: false,
-        payload: configs.payload.user.signupFail,
+        payload: configs.payload.user.signin.fail,
       });
       return;
     }
@@ -83,7 +100,7 @@ const signup = (deps, models, configs) => async (req, res) => {
     await user.save();
     res.json({
       success: true,
-      payload: configs.payload.user.signupSuccess,
+      payload: configs.payload.user.signin.success,
     });
   } catch (err) {
     deps.logger.error(`Register failure: ${err}`);

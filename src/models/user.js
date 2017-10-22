@@ -1,6 +1,8 @@
 export default (deps) => {
   const userSchema = new deps.mongoose.Schema({
+    new: { type: Boolean, default: true },
     email: { type: String, unique: true },
+    pseudo: { type: String, unique: true },
     password: String,
     passwordResetToken: String,
     passwordResetExpires: Date,
@@ -11,9 +13,15 @@ export default (deps) => {
     tokens: Array,
 
     profile: {
-      name: String,
-      gender: String,
-      location: String,
+      faction: String,
+      level: Number,
+      gold: Number,
+      friends: Array,
+    },
+
+    ship: {
+      skin: deps.mongoose.Schema.Types.ObjectId,
+      stats: Object,
     },
   }, {
     timestamps: true,

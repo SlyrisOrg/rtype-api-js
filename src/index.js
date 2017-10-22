@@ -31,18 +31,11 @@ import dotenv from 'dotenv';
 import expressValidator from 'express-validator';
 
 // ///////////// //
-// CORE MODULES //
-// ///////////// //
-
-import appCore from './core/app';
-import serverCore from './core/server';
-import configCore from './core/config';
-import loggerCore from './core/logger';
-
-// ///////////// //
 // TIERS MODULES //
 // ///////////// //
 
+import configModule from './modules/config';
+import loggerModule from './modules/logger';
 import userModule from './modules/user';
 
 // /////////// //
@@ -61,29 +54,43 @@ import userModel from './models/user';
 // INITIALS MODULES //
 // //////////////// //
 
-const config = configCore({
+const config = configModule({
   dotenv,
 }, {
   payload: {
     system: {
-      notFound: { id: 0, name: 'NOT_FOUND' },
-      internalError: { id: 1, name: 'INTERNAL_ERROR' },
+      notFound: { id: 7, name: 'NOT_FOUND' },
+      internalError: { id: 2, name: 'INTERNAL_ERROR' },
+      unvalidSignature: { id: 12, name: 'UNVALID_SIGNATURE' },
     },
     format: {
-      emailEmpty: { id: 2, name: 'USER_EMAIL_EMPTY' },
-      emailBadFormat: { id: 3, name: 'USER_EMAIL_BAD_FORMAT' },
-      passwordLenght: { id: 4, name: 'USER_PASSWORD_EMPTY' },
+      pseudo: {
+        empty: { id: 3, name: 'USER_PSEUDO_EMPTY' },
+        badFormat: { id: 4, name: 'USER_PSEUDO_BAD_FORMAT' },
+      },
+      email: {
+        empty: { id: 10, name: 'USER_EMAIL_EMPTY' },
+        badFormat: { id: 11, name: 'USER_EMAIL_BAD_FORMAT' },
+      },
+      password: {
+        empty: { id: 6, name: 'USER_PASSWORD_EMPTY' },
+        badFormat: { id: 5, name: 'USER_PASSWORD_BAD_FORMAT' },
+      },
     },
     user: {
-      signinSuccess: { id: 5, name: 'USER_SUCCESS_SIGIN' },
-      signinFail: { id: 6, name: 'USER_FAIL_SIGIN' },
-      signupSuccess: { id: 7, name: 'USER_SUCCESS_SIGNUP' },
-      signupFail: { id: 8, name: 'USER_FAIL_SIGNUP' },
+      signin: {
+        success: { id: 0, name: 'USER_SUCCESS_SIGIN' },
+        fail: { id: 1, name: 'USER_FAIL_SIGIN' },
+      },
+      signup: {
+        success: { id: 7, name: 'USER_SUCCESS_SIGNUP' },
+        fail: { id: 9, name: 'USER_FAIL_SIGNUP' },
+      },
     },
   },
 });
 
-const logger = loggerCore({
+const logger = loggerModule({
   winston,
 }, config);
 
@@ -116,35 +123,203 @@ userModule({
 // APPLICATION //
 // /////////// //
 
-const app = appCore({
-  express,
-  logger,
-  helmet,
-  morgan,
-  expressValidator,
+const app = express();
+
+// /////////////// //
+// SECURITY LAYERS //
+// /////////////// //
+
+app.use(helmet());
+app.use(async (req, res, next) => {
+  const signature = req.headers['x-hub-signature'];
+
+  if (!config.server.production) {
+    next();
+    return;
+  }
+
+  if (signature) {
+    const elements = signature.split('=');
+    const password = elements[1] || signature;
+    const isMatch = await bcrypt.compare(password, config.server.signature);
+
+    if (isMatch) {
+      next();
+      return;
+    }
+  }
+
+  res.json({
+    success: false,
+    payload: config.payload.system.unvalidSignature,
+  });
+});
+app.use(morgan('combined', { stream: { write: message => logger.info(message) } }));
+app.use(passport.initialize());
+
+// ///////////// //
+// PARSER LAYERS //
+// ///////////// //
+
+app.use(bodyParser.urlencoded({ extended: true, defer: true }));
+app.use(bodyParser.json({ type: '*/*' }));
+
+// ///////////// //
+// ERROR CATCHER //
+// ///////////// //
+
+app.use((error, req, res, next) => {
+  if (error instanceof SyntaxError) {
+    logger.error('Bad format request');
+  } else {
+    next();
+  }
+});
+
+// ///////////// //
+// HELPER LAYERS //
+// ///////////// //
+
+app.use(expressValidator());
+app.use((req, res, next) => {
+  logger.debug(req.body);
+  next();
+});
+app.use((req, res, next) => {
+  const chunks = [];
+
+  const oldWrite = res.write;
+  res.write = function write(chunk, ...args) {
+    chunks.push(chunk);
+
+    oldWrite.apply(res, [chunk, args]);
+  };
+
+  const oldEnd = res.end;
+  res.end = function end(chunk, ...args) {
+    if (chunk) {
+      chunks.push(chunk);
+    }
+
+    const body = Buffer.concat(chunks).toString('utf8');
+    logger.debug(JSON.parse(body));
+
+    oldEnd.apply(res, [chunk, args]);
+  };
+
+  next();
+});
+
+// /////////////// //
+// STATIC ENDPOINT //
+// /////////////// //
+
+app.use('/', express.static(path.resolve(process.cwd(), 'public')));
+
+// /////////////////// //
+// CONTROLLER ENDPOINT //
+// /////////////////// //
+
+app.use('/api/user', userController({
   passport,
-  bodyParser,
-  path,
-}, {
-  '/api/user': userController({
-    passport,
-    logger,
-    jwt,
-  }, {
-    User,
-  }, config)(express.Router()),
-}, config);
-
-// ////// //
-// Server //
-// ////// //
-
-serverCore({
-  fs,
   logger,
-  http,
-  https,
-  app,
-}, config);
+  jwt,
+}, {
+  User,
+}, config)(express.Router()));
+
+// //////////////// //
+// DEFAULT ENDPOINT //
+// //////////////// //
+
+app.use('*', (req, res) => {
+  res.json({
+    success: false,
+    payload: config.payload.system.notFound,
+  });
+});
+
+// ////////////////////// //
+// SERVER EVENTS LISTENER //
+// ////////////////////// //
+
+const onStartEvent = () =>
+  logger.info(`Application launched on ${config.server.env}`);
+
+const onErrorEvent = (err) => {
+  if (err.syscall !== 'listen') {
+    throw new Error(err);
+  }
+
+  const bind = typeof config.server.port === 'string'
+    ? `Pipe ${config.server.port}`
+    : `Port ${config.server.port}`;
+
+  switch (err.code) {
+    case 'EACCES':
+      throw new Error(`${bind} port requires elevated privileges`);
+    case 'EADDRINUSE':
+      throw new Error(`${bind} port is already in use`);
+    default:
+      throw err;
+  }
+};
+
+const onListenEvent = server => () => {
+  const addr = server.address();
+  const bind = typeof addr === 'string'
+    ? `pipe ${addr}`
+    : `port ${addr.port}`;
+  logger.info(`Application listening on ${bind}`);
+};
+
+// /////////////// //
+// SERVER INSTANCE //
+// /////////////// //
+
+if (config.server.production) {
+  const ssl = {
+    key: fs.readFileSync(config.server.ssl.key),
+    cert: fs.readFileSync(config.server.ssl.cert),
+  };
+  const instanse = http.createServer(app);
+  const server = https.createServer(ssl, instanse);
+
+  server.listen(config.server.port, onStartEvent);
+  server.on('err', onErrorEvent);
+  server.on('listening', onListenEvent(server));
+} else {
+  const server = http.createServer(app);
+
+  server.listen(config.server.port, onStartEvent);
+  server.on('err', onErrorEvent);
+  server.on('listening', onListenEvent(server));
+}
+
+// /////////////////// //
+// HANDLE PROCESS EXIT //
+// /////////////////// //
+
+const cleanExit = () => {
+  logger.info('Application exit');
+  process.exit(0);
+};
+
+process.on('SIGINT', cleanExit);
+process.on('SIGTERM', cleanExit);
+
+// ////////////////////// //
+// HANDLE PROCESS FAILURE //
+// ////////////////////// //
+
+process.on('uncaughtException', (err) => {
+  logger.error(`Caught exception: ${err}`);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, p) => {
+  logger.error(`Unhandled Rejection at: ${p} and reason: ${reason}`);
+  process.exit(1);
+});
 
 export default app;

@@ -30,7 +30,7 @@ export default (deps, configs) => {
     port: process.env.PORT,
     locale: process.env.LOCALE,
     secret: process.env.SECRET,
-    auth: process.env.AUTH,
+    signature: process.env.SIGNATURE,
     ssl: {
       key: process.env.SSL_KEY,
       cert: process.env.SSL_CERTIFICAT,

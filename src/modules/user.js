@@ -1,21 +1,23 @@
 export default (deps, models, configs) => {
   deps.passport.use(new deps.passportLocal.Strategy({
-    usernameField: 'email',
-  }, async (email, password, done) => {
+    usernameField: 'pseudo',
+    passwordField: 'password',
+    session: false,
+  }, async (pseudo, password, done) => {
     try {
-      const user = await models.User.findOne({ email: email.toLowerCase() });
+      const user = await models.User.findOne({ pseudo });
+
       if (!user) {
-        done(undefined, false, { message: `Email ${email} not found.` });
+        done(undefined, false, { message: `Pseudo ${pseudo} not found.` });
         return;
       }
-
       const isMatch = await user.verifyPassword(password);
       if (isMatch) {
         done(undefined, user);
         return;
       }
 
-      done(undefined, false, { message: 'Invalid email or password.' });
+      done(undefined, false, { message: 'Invalid pseudo or password.' });
     } catch (err) {
       done(err, false);
     }

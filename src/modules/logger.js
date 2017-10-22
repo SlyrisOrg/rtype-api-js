@@ -7,7 +7,7 @@ export default (deps, configs) => {
 
   const consoleLogger = new deps.winston.transports.Console({
     timestamp: true,
-    level: 'info',
+    level: 'debug',
     handleExceptions: true,
     prettyPrint: true,
     silent: false,
