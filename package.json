@@ -16,17 +16,12 @@
   "private": true,
   "scripts": {
     "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
-    "start:dev": "npm run launch:dev",
-    "start:prod": "npm run build && npm run launch:prod",
-    "launch": "if-env NODE_ENV=production && npm run launch:prod || npm run launch:dev",
-    "launch:dev": "nodemon --inspect src/index.js --exec babel-node",
-    "beta:launch:dev": "pm2 start --interpreter ./node_modules/.bin/babel-node ./src/index.js --watch --name app",
-    "launch:prod": "node dist",
+    "start:dev": "nodemon --inspect src/index.js --exec babel-node",
+    "start:prod": "pm2 start ./dist/index.js --name app-production",
     "helper:lint": "eslint src --fix",
     "helper:test": "jest test",
     "helper:clear": "rimraf dist",
-    "helper:security": "snyk test",
-    "build": "babel src -d dist --copy-files"
+    "herper:build": "npm run helper:clear && babel src -d dist --copy-files"
   },
   "dependencies": {
     "bcrypt": "^1.0.3",
