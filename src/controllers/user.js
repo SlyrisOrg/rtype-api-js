@@ -92,7 +92,7 @@ const signup = (deps, models, configs) => async (req, res) => {
     if (existingUser) {
       res.json({
         success: false,
-        payload: configs.payload.user.signin.fail,
+        payload: configs.payload.user.signup.fail,
       });
       return;
     }
@@ -100,7 +100,7 @@ const signup = (deps, models, configs) => async (req, res) => {
     await user.save();
     res.json({
       success: true,
-      payload: configs.payload.user.signin.success,
+      payload: configs.payload.user.signup.success,
     });
   } catch (err) {
     deps.logger.error(`Register failure: ${err}`);
