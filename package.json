@@ -26,7 +26,7 @@
     "helper:test": "jest test",
     "helper:clear": "rimraf dist",
     "helper:security": "snyk test",
-    "build": "npm run clear && babel src -d dist --copy-files"
+    "build": "babel src -d dist --copy-files"
   },
   "dependencies": {
     "bcrypt": "^1.0.3",
