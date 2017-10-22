@@ -2,7 +2,7 @@ export default (deps) => {
   const userSchema = new deps.mongoose.Schema({
     new: { type: Boolean, default: true },
     email: { type: String, default: '', unique: true },
-    pseudo: { type: String, default: '', unique: true },
+    name: { type: String, default: '', unique: true },
     password: { type: String, default: '' },
     passwordResetToken: { type: String, default: '' },
     passwordResetExpires: { type: Date, default: new Date() },
@@ -13,6 +13,7 @@ export default (deps) => {
     tokens: { type: Array, default: [] },
 
     profile: {
+      pseudo: { type: String, default: '', unique: true },
       faction: { type: String, default: '' },
       level: { type: Number, default: 0 },
       gold: { type: Number, default: 0 },

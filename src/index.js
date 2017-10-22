@@ -63,9 +63,9 @@ const config = configModule({
       unvalidToken: { id: 13, name: 'UNVALID_TOKEN' },
     },
     input: {
-      pseudo: {
-        empty: { id: 3, name: 'USER_PSEUDO_EMPTY' },
-        badFormat: { id: 4, name: 'USER_PSEUDO_BAD_FORMAT' },
+      name: {
+        empty: { id: 3, name: 'USER_NAME_EMPTY' },
+        badFormat: { id: 4, name: 'USER_NAME_BAD_FORMAT' },
       },
       email: {
         empty: { id: 10, name: 'USER_EMAIL_EMPTY' },

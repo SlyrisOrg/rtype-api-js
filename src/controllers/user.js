@@ -26,9 +26,9 @@ const verifyToken = (deps, configs) => async (req, res, next) => {
 const signin = (deps, models, configs) => async (req, res, next) => {
   const payload = configs.payload.user.signin;
 
-  req.assert('pseudo', configs.payload.input.pseudo.empty).notEmpty();
-  req.assert('pseudo', configs.payload.input.pseudo.badFormat).isLength({ min: 3, max: 20 });
-  req.assert('pseudo', configs.payload.input.pseudo.badFormat).isAlphanumeric();
+  req.assert('name', configs.payload.input.name.empty).notEmpty();
+  req.assert('name', configs.payload.input.name.badFormat).isLength({ min: 3, max: 20 });
+  req.assert('name', configs.payload.input.name.badFormat).isAlphanumeric();
 
   req.assert('password', configs.payload.input.password.empty).notEmpty();
   req.assert('password', configs.payload.input.password.badFormat).isLength({ min: 4, max: 16 });
@@ -84,9 +84,9 @@ const signin = (deps, models, configs) => async (req, res, next) => {
 const signup = (deps, models, configs) => async (req, res) => {
   const payload = configs.payload.user.signup;
 
-  req.assert('pseudo', configs.payload.input.pseudo.empty).notEmpty();
-  req.assert('pseudo', configs.payload.input.pseudo.badFormat).isLength({ min: 3, max: 20 });
-  req.assert('pseudo', configs.payload.input.pseudo.badFormat).isAlphanumeric();
+  req.assert('name', configs.payload.input.name.empty).notEmpty();
+  req.assert('name', configs.payload.input.name.badFormat).isLength({ min: 3, max: 20 });
+  req.assert('name', configs.payload.input.name.badFormat).isAlphanumeric();
 
   req.assert('password', configs.payload.input.password.empty).notEmpty();
   req.assert('password', configs.payload.input.password.badFormat).isLength({ min: 4, max: 16 });
@@ -109,7 +109,7 @@ const signup = (deps, models, configs) => async (req, res) => {
   }
 
   const user = new models.User({
-    pseudo: req.body.pseudo,
+    name: req.body.name,
     email: req.body.email,
     password: req.body.password,
   });
@@ -117,7 +117,7 @@ const signup = (deps, models, configs) => async (req, res) => {
   try {
     const existingUser = await models.User.findOne({
       $or: [
-        { pseudo: req.body.pseudo },
+        { name: req.body.name },
         { email: req.body.email },
       ],
     });

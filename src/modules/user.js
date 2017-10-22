@@ -1,11 +1,11 @@
 export default (deps, models) => {
   deps.passport.use(new deps.passportLocal.Strategy({
-    usernameField: 'pseudo',
+    usernameField: 'name',
     passwordField: 'password',
     session: false,
-  }, async (pseudo, password, done) => {
+  }, async (name, password, done) => {
     try {
-      const user = await models.User.findOne({ pseudo });
+      const user = await models.User.findOne({ name });
 
       if (!user) {
         done(null, false);
