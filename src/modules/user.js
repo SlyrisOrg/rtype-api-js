@@ -1,8 +1,8 @@
 export default (deps, models) => {
   deps.passport.use(new deps.passportLocal.Strategy({
-    usernameField: 'name',
-    passwordField: 'password',
-    session: false,
+    "usernameField": "name",
+    "passwordField": "password",
+    "session": false
   }, async (name, password, done) => {
     try {
       const user = await models.User.findOne({ name });

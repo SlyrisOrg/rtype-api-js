@@ -1,24 +1,25 @@
 const verifyToken = (deps, configs) => async (req, res, next) => {
-  const token = req.get('Token');
+  const token = req.get("Token");
 
   try {
     const data = await deps.jwt.verify(token, configs.server.secret);
 
     if (!data) {
       res.json({
-        success: false,
-        payload: configs.payload.system.unvalidToken,
-        content: {},
+        "success": false,
+        "payload": configs.payload.system.unvalidToken,
+        "content": {}
       });
     }
 
     req.user = data.id;
     next();
   } catch (err) {
+    deps.logger.error(`Token verify error: ${err}`);
     res.json({
-      success: false,
-      payload: configs.payload.system.unvalidToken,
-      content: {},
+      "success": false,
+      "payload": configs.payload.system.unvalidToken,
+      "content": {}
     });
   }
 };
@@ -26,12 +27,12 @@ const verifyToken = (deps, configs) => async (req, res, next) => {
 const signin = (deps, models, configs) => async (req, res, next) => {
   const payload = configs.payload.user.signin;
 
-  req.assert('name', configs.payload.input.name.empty).notEmpty();
-  req.assert('name', configs.payload.input.name.badFormat).isLength({ min: 3, max: 20 });
-  req.assert('name', configs.payload.input.name.badFormat).isAlphanumeric();
+  req.assert("name", configs.payload.input.name.empty).notEmpty();
+  req.assert("name", configs.payload.input.name.badFormat).isLength({ "min": 3, "max": 20 });
+  req.assert("name", configs.payload.input.name.badFormat).isAlphanumeric();
 
-  req.assert('password', configs.payload.input.password.empty).notEmpty();
-  req.assert('password', configs.payload.input.password.badFormat).isLength({ min: 4, max: 16 });
+  req.assert("password", configs.payload.input.password.empty).notEmpty();
+  req.assert("password", configs.payload.input.password.badFormat).isLength({ "min": 4, "max": 16 });
 
   const errors = req.validationErrors();
 
@@ -39,44 +40,44 @@ const signin = (deps, models, configs) => async (req, res, next) => {
     const allErrors = errors.map(e => e.msg);
 
     res.json({
-      success: false,
-      payload: allErrors[0],
-      content: {},
+      "success": false,
+      "payload": allErrors[0],
+      "content": {}
     });
     return;
   }
 
-  deps.passport.authenticate('local', { session: false }, (err, user) => {
+  deps.passport.authenticate("local", { "session": false }, (err, user) => {
     if (err) {
       res.json({
-        success: false,
-        payload: configs.payload.system.internalError,
-        content: {},
+        "success": false,
+        "payload": configs.payload.system.internalError,
+        "content": {}
       });
       return;
     }
 
     if (!user) {
       res.json({
-        success: false,
-        payload: payload.fail,
-        content: {},
+        "success": false,
+        "payload": payload.fail,
+        "content": {}
       });
       return;
     }
 
     res.json({
-      success: true,
-      payload: payload.success,
-      content: {
-        new: user.new,
-        token: deps.jwt.sign({
-          id: user._id,
+      "success": true,
+      "payload": payload.success,
+      "content": {
+        "new": user.new,
+        "token": deps.jwt.sign({
+          "id": user._id
         }, configs.server.secret, {
-          expiresIn: 48 * 60 * 60,
+          "expiresIn": 48 * 60 * 60
         }),
-        user: user.profile,
-      },
+        "user": user.profile
+      }
     });
   })(req, res, next);
 };
@@ -84,16 +85,16 @@ const signin = (deps, models, configs) => async (req, res, next) => {
 const signup = (deps, models, configs) => async (req, res) => {
   const payload = configs.payload.user.signup;
 
-  req.assert('name', configs.payload.input.name.empty).notEmpty();
-  req.assert('name', configs.payload.input.name.badFormat).isLength({ min: 3, max: 20 });
-  req.assert('name', configs.payload.input.name.badFormat).isAlphanumeric();
+  req.assert("name", configs.payload.input.name.empty).notEmpty();
+  req.assert("name", configs.payload.input.name.badFormat).isLength({ "min": 3, "max": 20 });
+  req.assert("name", configs.payload.input.name.badFormat).isAlphanumeric();
 
-  req.assert('password', configs.payload.input.password.empty).notEmpty();
-  req.assert('password', configs.payload.input.password.badFormat).isLength({ min: 4, max: 16 });
+  req.assert("password", configs.payload.input.password.empty).notEmpty();
+  req.assert("password", configs.payload.input.password.badFormat).isLength({ "min": 4, "max": 16 });
 
-  req.assert('email', configs.payload.input.email.empty).notEmpty();
-  req.assert('email', configs.payload.input.email.badFormat).isEmail();
-  req.sanitize('email').normalizeEmail({ gmail_remove_dots: false });
+  req.assert("email", configs.payload.input.email.empty).notEmpty();
+  req.assert("email", configs.payload.input.email.badFormat).isEmail();
+  req.sanitize("email").normalizeEmail({ "gmail_remove_dots": false });
 
   const errors = req.validationErrors();
 
@@ -101,47 +102,48 @@ const signup = (deps, models, configs) => async (req, res) => {
     const allErrors = errors.map(e => e.msg);
 
     res.json({
-      success: false,
-      payload: allErrors[0],
-      content: {},
+      "success": false,
+      "payload": allErrors[0],
+      "content": {}
     });
     return;
   }
 
   const user = new models.User({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
+    "name": req.body.name,
+    "email": req.body.email,
+    "password": req.body.password
   });
 
   try {
     const existingUser = await models.User.findOne({
-      $or: [
-        { name: req.body.name },
-        { email: req.body.email },
-      ],
+      "$or": [
+        { "name": req.body.name },
+        { "email": req.body.email }
+      ]
     });
 
     if (existingUser) {
       res.json({
-        success: false,
-        payload: payload.fail,
-        content: {},
+        "success": false,
+        "payload": payload.fail,
+        "content": {}
       });
       return;
     }
 
     await user.save();
     res.json({
-      success: true,
-      payload: payload.success,
-      content: {},
+      "success": true,
+      "payload": payload.success,
+      "content": {}
     });
   } catch (err) {
+    deps.logger.error(`Signup user error: ${err}`);
     res.json({
-      success: false,
-      payload: configs.payload.system.internalError,
-      content: {},
+      "success": false,
+      "payload": configs.payload.system.internalError,
+      "content": {}
     });
   }
 };
@@ -154,23 +156,24 @@ const getUserData = (deps, models, configs) => async (req, res) => {
 
     if (!data) {
       res.json({
-        success: false,
-        payload: payload.fail,
-        content: {},
+        "success": false,
+        "payload": payload.fail,
+        "content": {}
       });
       return;
     }
 
     res.json({
-      success: true,
-      payload: payload.success,
-      content: data.profile,
+      "success": true,
+      "payload": payload.success,
+      "content": data.profile
     });
   } catch (err) {
+    deps.logger.error(`Get user error: ${err}`);
     res.json({
-      success: false,
-      payload: configs.payload.user.system.internalError,
-      content: {},
+      "success": false,
+      "payload": configs.payload.user.system.internalError,
+      "content": {}
     });
   }
 };
@@ -179,26 +182,27 @@ const updateUserData = (deps, models, configs) => async (req, res) => {
   const payload = configs.payload.user.data.put;
 
   try {
-    const newUser = await models.User.findByIdAndUpdate(req.user, { profile: req.body });
+    const newUser = await models.User.findByIdAndUpdate(req.user, { "profile": req.body });
 
     if (!newUser) {
       res.json({
-        success: true,
-        payload: payload.fail,
-        content: {},
+        "success": true,
+        "payload": payload.fail,
+        "content": {}
       });
     }
 
     res.json({
-      success: true,
-      payload: payload.success,
-      content: newUser.profile,
+      "success": true,
+      "payload": payload.success,
+      "content": newUser.profile
     });
   } catch (err) {
+    deps.logger.error(`Update user error: ${err}`);
     res.json({
-      success: false,
-      payload: configs.payload.system.internalError,
-      content: {},
+      "success": false,
+      "payload": configs.payload.system.internalError,
+      "content": {}
     });
   }
 };
@@ -206,41 +210,69 @@ const updateUserData = (deps, models, configs) => async (req, res) => {
 const createUserData = (deps, models, configs) => async (req, res) => {
   const payload = configs.payload.user.data.post;
 
+  req.assert("pseudo", configs.payload.input.pseudo.empty).notEmpty();
+  req.assert("pseudo", configs.payload.input.pseudo.badFormat).isLength({ "min": 3, "max": 20 });
+  req.assert("pseudo", configs.payload.input.pseudo.badFormat).isAlphanumeric();
+
+  const errors = req.validationErrors();
+
+  if (errors.length) {
+    const allErrors = errors.map(e => e.msg);
+
+    res.json({
+      "success": false,
+      "payload": allErrors[0],
+      "content": {}
+    });
+    return;
+  }
+
   try {
     const user = await models.User.findById(req.user);
 
     if (!user.new) {
       res.json({
-        success: true,
-        payload: payload.fail,
-        content: {},
+        "success": true,
+        "payload": payload.fail,
+        "content": {}
+      });
+      return;
+    }
+
+    if (!req.body.profile) {
+      res.json({
+        "success": true,
+        "payload": payload.fail,
+        "content": {}
       });
       return;
     }
 
     const newUser = await models.User.findByIdAndUpdate(req.user, {
-      new: false,
-      profile: req.body,
+      "new": false,
+      "pseudo": req.body.pseudo,
+      "profile": req.body.profile
     });
 
     if (!newUser) {
       res.json({
-        success: true,
-        payload: payload.fail,
-        content: {},
+        "success": true,
+        "payload": payload.fail,
+        "content": {}
       });
     }
 
     res.json({
-      success: true,
-      payload: payload.success,
-      content: newUser.profile,
+      "success": true,
+      "payload": payload.success,
+      "content": newUser.profile
     });
   } catch (err) {
+    deps.logger.error(`Create user error: ${err}`);
     res.json({
-      success: false,
-      payload: configs.payload.system.internalError,
-      content: {},
+      "success": false,
+      "payload": configs.payload.system.internalError,
+      "content": {}
     });
   }
 };
@@ -248,12 +280,12 @@ const createUserData = (deps, models, configs) => async (req, res) => {
 export default (deps, models, configs) => (router) => {
   const verifyTokenMiddleware = verifyToken(deps, configs);
 
-  router.get('/', verifyTokenMiddleware, getUserData(deps, models, configs));
-  router.put('/', verifyTokenMiddleware, updateUserData(deps, models, configs));
-  router.post('/', verifyTokenMiddleware, createUserData(deps, models, configs));
+  router.get("/", verifyTokenMiddleware, getUserData(deps, models, configs));
+  router.put("/", verifyTokenMiddleware, updateUserData(deps, models, configs));
+  router.post("/", verifyTokenMiddleware, createUserData(deps, models, configs));
 
-  router.post('/signin', signin(deps, models, configs));
-  router.post('/signup', signup(deps, models, configs));
+  router.post("/signin", signin(deps, models, configs));
+  router.post("/signup", signup(deps, models, configs));
 
   return router;
 };

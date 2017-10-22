@@ -10,7 +10,21 @@
     "transform-object-rest-spread",
     "dynamic-import-node",
     "transform-class-properties",
-    "transform-function-bind"
+    "transform-function-bind",
+    "transform-inline-consecutive-adds",
+    "transform-minify-booleans",
+    ["minify-dead-code-elimination", { "optimizeRawSize": true }],
+    "minify-constant-folding",
+    "minify-flip-comparisons",
+    "minify-guarded-expressions",
+    "minify-infinity",
+    "minify-numeric-literals",
+    "minify-simplify",
+    "transform-property-literals",
+    "transform-regexp-constructors",
+    "transform-remove-console",
+    "transform-remove-debugger",
+    "transform-undefined-to-void"
   ],
   "ignore": [
     "node_modules"

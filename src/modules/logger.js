@@ -6,22 +6,22 @@ export default (deps, configs) => {
   // /////////// //
 
   const consoleLogger = new deps.winston.transports.Console({
-    timestamp: true,
-    level: 'debug',
-    handleExceptions: true,
-    prettyPrint: true,
-    silent: false,
-    json: false,
-    humanReadableUnhandledException: true,
-    colorize: !configs.server.production,
+    "timestamp": true,
+    "level": configs.server.production ? "error" : "debug",
+    "handleExceptions": true,
+    "prettyPrint": true,
+    "silent": false,
+    "json": false,
+    "humanReadableUnhandledException": true,
+    "colorize": !configs.server.production
   });
 
-  consoleLogger.on('error', (err) => {
-    throw new Error('Console error: ', err);
+  consoleLogger.on("error", (err) => {
+    throw new Error("Console error: ", err);
   });
 
   return new deps.winston.Logger({
-    transports: [consoleLogger],
-    exitOnError: false,
+    "transports": [consoleLogger],
+    "exitOnError": false
   });
 };

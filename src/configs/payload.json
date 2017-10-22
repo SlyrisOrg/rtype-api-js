@@ -1,0 +1,120 @@
+{
+  "system": {
+    "notFound": {
+      "id": 7,
+      "name": "NOT_FOUND"
+    },
+    "internalError": {
+      "id": 2,
+      "name": "INTERNAL_ERROR"
+    },
+    "unvalidSignature": {
+      "id": 12,
+      "name": "UNVALID_SIGNATURE"
+    },
+    "unvalidToken": {
+      "id": 13,
+      "name": "UNVALID_TOKEN"
+    },
+    "badRequest": {
+      "id": 21,
+      "name": "UNVALID_REQUEST"
+    }
+  },
+  "input": {
+    "pseudo": {
+      "empty": {
+        "id": 22,
+        "name": "USER_PSEUDO_EMPTY"
+      },
+      "badFormat": {
+        "id": 23,
+        "name": "USER_PSEUDO_BAD_FORMAT"
+      }
+    },
+    "name": {
+      "empty": {
+        "id": 3,
+        "name": "USER_NAME_EMPTY"
+      },
+      "badFormat": {
+        "id": 4,
+        "name": "USER_NAME_BAD_FORMAT"
+      }
+    },
+    "email": {
+      "empty": {
+        "id": 10,
+        "name": "USER_EMAIL_EMPTY"
+      },
+      "badFormat": {
+        "id": 11,
+        "name": "USER_EMAIL_BAD_FORMAT"
+      }
+    },
+    "password": {
+      "empty": {
+        "id": 6,
+        "name": "USER_PASSWORD_EMPTY"
+      },
+      "badFormat": {
+        "id": 5,
+        "name": "USER_PASSWORD_BAD_FORMAT"
+      }
+    }
+  },
+  "user": {
+    "data": {
+      "get": {
+        "success": {
+          "id": 15,
+          "name": "USER_GET_DATA_SUCCESS"
+        },
+        "fail": {
+          "id": 16,
+          "name": "USER_GET_DATA_FAIL"
+        }
+      },
+      "put": {
+        "success": {
+          "id": 17,
+          "name": "USER_PUT_DATA_SUCCESS"
+        },
+        "fail": {
+          "id": 18,
+          "name": "USER_PUT_DATA_FAIL"
+        }
+      },
+      "post": {
+        "success": {
+          "id": 19,
+          "name": "USER_POST_DATA_SUCCESS"
+        },
+        "fail": {
+          "id": 20,
+          "name": "USER_POST_DATA_FAIL"
+        }
+      }
+    },
+    "signin": {
+      "success": {
+        "id": 0,
+        "name": "USER_SIGIN_SUCCESS"
+      },
+      "fail": {
+        "id": 1,
+        "name": "USER_SIGIN_FAIL"
+      }
+    },
+    "signup": {
+      "success": {
+        "id": 7,
+        "name": "USER_SIGNUP_SUCCESS"
+      },
+      "fail": {
+        "id": 9,
+        "name": "USER_SIGNUP_FAIL"
+      }
+    }
+  }
+}

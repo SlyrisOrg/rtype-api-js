@@ -18,12 +18,23 @@
     "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
     "start:dev": "nodemon --inspect src/index.js --exec babel-node",
     "start:prod": "pm2 start ./dist/index.js --name app-production",
-    "helper:lint": "eslint src --fix",
-    "helper:test": "jest test",
-    "helper:clear": "rimraf dist",
-    "helper:build": "npm run helper:clear && babel src -d dist --copy-files"
+    "lint": "eslint src --fix",
+    "test": "jest test",
+    "clear": "rimraf dist",
+    "build": "npm run clear && babel src -d dist --copy-files"
   },
   "dependencies": {
+    "babel-plugin-minify-infinity": "^0.2.0",
+    "babel-plugin-minify-mangle-names": "^0.2.0",
+    "babel-plugin-minify-numeric-literals": "^0.2.0",
+    "babel-plugin-minify-simplify": "^0.2.0",
+    "babel-plugin-transform-inline-consecutive-adds": "^0.2.0",
+    "babel-plugin-transform-minify-booleans": "^6.8.3",
+    "babel-plugin-transform-property-literals": "^6.8.5",
+    "babel-plugin-transform-regexp-constructors": "^0.2.0",
+    "babel-plugin-transform-remove-console": "^6.8.5",
+    "babel-plugin-transform-remove-debugger": "^6.8.5",
+    "babel-plugin-transform-undefined-to-void": "^6.8.3",
     "bcrypt": "^1.0.3",
     "body-parser": "^1.15.2",
     "dotenv": "^4.0.0",
@@ -43,6 +54,10 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-plugin-dynamic-import-node": "^1.1.0",
+    "babel-plugin-minify-constant-folding": "^0.2.0",
+    "babel-plugin-minify-dead-code-elimination": "^0.2.0",
+    "babel-plugin-minify-flip-comparisons": "^0.2.0",
+    "babel-plugin-minify-guarded-expressions": "^0.2.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-function-bind": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
@@ -53,8 +68,8 @@
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-node": "^5.1.1",
     "jest": "^21.2.1",
-    "rimraf": "^2.6.1",
     "nodemon": "^1.12.1",
+    "rimraf": "^2.6.1",
     "supertest": "^3.0.0"
   }
 }
