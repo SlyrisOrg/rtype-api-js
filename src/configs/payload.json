@@ -1,64 +1,64 @@
 {
   "system": {
     "notFound": {
-      "id": 7,
+      "id": 101,
       "name": "NOT_FOUND"
     },
     "internalError": {
-      "id": 2,
+      "id": 102,
       "name": "INTERNAL_ERROR"
     },
     "unvalidSignature": {
-      "id": 11,
+      "id": 103,
       "name": "UNVALID_SIGNATURE"
     },
     "unvalidToken": {
-      "id": 12,
+      "id": 104,
       "name": "UNVALID_TOKEN"
     },
     "badRequest": {
-      "id": 20,
+      "id": 105,
       "name": "UNVALID_REQUEST"
     }
   },
   "input": {
     "pseudo": {
       "empty": {
-        "id": 21,
+        "id": 201,
         "name": "USER_PSEUDO_EMPTY"
       },
       "badFormat": {
-        "id": 22,
+        "id": 202,
         "name": "USER_PSEUDO_BAD_FORMAT"
       }
     },
     "name": {
       "empty": {
-        "id": 3,
+        "id": 301,
         "name": "USER_NAME_EMPTY"
       },
       "badFormat": {
-        "id": 4,
+        "id": 302,
         "name": "USER_NAME_BAD_FORMAT"
       }
     },
     "email": {
       "empty": {
-        "id": 10,
+        "id": 401,
         "name": "USER_EMAIL_EMPTY"
       },
       "badFormat": {
-        "id": 13,
+        "id": 402,
         "name": "USER_EMAIL_BAD_FORMAT"
       }
     },
     "password": {
       "empty": {
-        "id": 6,
+        "id": 501,
         "name": "USER_PASSWORD_EMPTY"
       },
       "badFormat": {
-        "id": 5,
+        "id": 502,
         "name": "USER_PASSWORD_BAD_FORMAT"
       }
     }
@@ -67,52 +67,52 @@
     "data": {
       "get": {
         "success": {
-          "id": 14,
+          "id": 601,
           "name": "USER_GET_DATA_SUCCESS"
         },
         "fail": {
-          "id": 15,
+          "id": 602,
           "name": "USER_GET_DATA_FAIL"
         }
       },
       "put": {
         "success": {
-          "id": 16,
+          "id": 701,
           "name": "USER_PUT_DATA_SUCCESS"
         },
         "fail": {
-          "id": 17,
+          "id": 702,
           "name": "USER_PUT_DATA_FAIL"
         }
       },
       "post": {
         "success": {
-          "id": 18,
+          "id": 801,
           "name": "USER_POST_DATA_SUCCESS"
         },
         "fail": {
-          "id": 19,
+          "id": 802,
           "name": "USER_POST_DATA_FAIL"
         }
       }
     },
     "signin": {
       "success": {
-        "id": 0,
+        "id": 901,
         "name": "USER_SIGIN_SUCCESS"
       },
       "fail": {
-        "id": 1,
+        "id": 902,
         "name": "USER_SIGIN_FAIL"
       }
     },
     "signup": {
       "success": {
-        "id": 8,
+        "id": 1001,
         "name": "USER_SIGNUP_SUCCESS"
       },
       "fail": {
-        "id": 9,
+        "id": 1002,
         "name": "USER_SIGNUP_FAIL"
       }
     }

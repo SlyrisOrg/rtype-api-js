@@ -185,7 +185,7 @@ const updateUserData = (deps, models, configs) => async (req, res) => {
     const user = await models.User.findById(req.user);
     const newUser = await models.User.findByIdAndUpdate(req.user, {
       "profile": {
-        user,
+        ...user.profile,
         ...req.body
       }
     }, {
@@ -260,7 +260,10 @@ const createUserData = (deps, models, configs) => async (req, res) => {
     const newUser = await models.User.findByIdAndUpdate(req.user, {
       "new": false,
       "pseudo": req.body.pseudo,
-      "profile": req.body.profile
+      "profile": {
+        ...user.profile,
+        ...req.body.profile
+      }
     });
 
     if (!newUser) {
