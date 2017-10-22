@@ -9,7 +9,6 @@ import http from 'http';
 // //////////////// //
 
 import path from 'path';
-import fs from 'fs';
 
 // //////////////// //
 // EXTERNAL MODULES //
@@ -61,8 +60,9 @@ const config = configModule({
       notFound: { id: 7, name: 'NOT_FOUND' },
       internalError: { id: 2, name: 'INTERNAL_ERROR' },
       unvalidSignature: { id: 12, name: 'UNVALID_SIGNATURE' },
+      unvalidToken: { id: 13, name: 'UNVALID_TOKEN' },
     },
-    format: {
+    input: {
       pseudo: {
         empty: { id: 3, name: 'USER_PSEUDO_EMPTY' },
         badFormat: { id: 4, name: 'USER_PSEUDO_BAD_FORMAT' },
@@ -77,13 +77,27 @@ const config = configModule({
       },
     },
     user: {
+      data: {
+        get: {
+          success: { id: 15, name: 'USER_GET_DATA_SUCCESS' },
+          fail: { id: 16, name: 'USER_GET_DATA_FAIL' },
+        },
+        put: {
+          success: { id: 17, name: 'USER_PUT_DATA_SUCCESS' },
+          fail: { id: 18, name: 'USER_PUT_DATA_FAIL' },
+        },
+        post: {
+          success: { id: 19, name: 'USER_POST_DATA_SUCCESS' },
+          fail: { id: 20, name: 'USER_POST_DATA_FAIL' },
+        },
+      },
       signin: {
-        success: { id: 0, name: 'USER_SUCCESS_SIGIN' },
-        fail: { id: 1, name: 'USER_FAIL_SIGIN' },
+        success: { id: 0, name: 'USER_SIGIN_SUCCESS' },
+        fail: { id: 1, name: 'USER_SIGIN_FAIL' },
       },
       signup: {
-        success: { id: 7, name: 'USER_SUCCESS_SIGNUP' },
-        fail: { id: 9, name: 'USER_FAIL_SIGNUP' },
+        success: { id: 7, name: 'USER_SIGNUP_SUCCESS' },
+        fail: { id: 9, name: 'USER_SIGNUP_FAIL' },
       },
     },
   },

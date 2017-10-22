@@ -1,29 +1,29 @@
 export default (deps) => {
   const userSchema = new deps.mongoose.Schema({
     new: { type: Boolean, default: true },
-    email: { type: String, unique: true },
-    pseudo: { type: String, unique: true },
-    password: String,
-    passwordResetToken: String,
-    passwordResetExpires: Date,
+    email: { type: String, default: '', unique: true },
+    pseudo: { type: String, default: '', unique: true },
+    password: { type: String, default: '' },
+    passwordResetToken: { type: String, default: '' },
+    passwordResetExpires: { type: Date, default: new Date() },
 
-    facebook: String,
-    twitter: String,
-    google: String,
-    tokens: Array,
+    facebook: { type: String, default: '' },
+    twitter: { type: String, default: '' },
+    google: { type: String, default: '' },
+    tokens: { type: Array, default: [] },
 
     profile: {
-      faction: String,
-      level: Number,
-      gold: Number,
-      friends: Array,
-    },
-
-    ship: {
-      skin: deps.mongoose.Schema.Types.ObjectId,
-      stats: Object,
+      faction: { type: String, default: '' },
+      level: { type: Number, default: 0 },
+      gold: { type: Number, default: 0 },
+      friends: { type: Array, default: [] },
+      ship: {
+        skin: { type: Number, default: 0 },
+        stats: { type: Array, default: {} },
+      },
     },
   }, {
+    minimize: false,
     timestamps: true,
     collection: 'user',
   });
