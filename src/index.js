@@ -3,7 +3,6 @@
 // ////////////// //
 
 import http from 'http';
-import https from 'https';
 
 // //////////////// //
 // INTERNAL MODULES //
@@ -277,24 +276,11 @@ const onListenEvent = server => () => {
 // SERVER INSTANCE //
 // /////////////// //
 
-if (config.server.production) {
-  const ssl = {
-    key: fs.readFileSync(config.server.ssl.key),
-    cert: fs.readFileSync(config.server.ssl.cert),
-  };
-  const instanse = http.createServer(app);
-  const server = https.createServer(ssl, instanse);
+const server = http.createServer(app);
 
-  server.listen(config.server.port, onStartEvent);
-  server.on('err', onErrorEvent);
-  server.on('listening', onListenEvent(server));
-} else {
-  const server = http.createServer(app);
-
-  server.listen(config.server.port, onStartEvent);
-  server.on('err', onErrorEvent);
-  server.on('listening', onListenEvent(server));
-}
+server.listen(config.server.port, onStartEvent);
+server.on('err', onErrorEvent);
+server.on('listening', onListenEvent(server));
 
 // /////////////////// //
 // HANDLE PROCESS EXIT //
