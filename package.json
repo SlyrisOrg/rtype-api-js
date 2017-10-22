@@ -21,7 +21,7 @@
     "helper:lint": "eslint src --fix",
     "helper:test": "jest test",
     "helper:clear": "rimraf dist",
-    "herper:build": "npm run helper:clear && babel src -d dist --copy-files"
+    "helper:build": "npm run helper:clear && babel src -d dist --copy-files"
   },
   "dependencies": {
     "bcrypt": "^1.0.3",
