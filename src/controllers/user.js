@@ -182,7 +182,16 @@ const updateUserData = (deps, models, configs) => async (req, res) => {
   const payload = configs.payload.user.data.put;
 
   try {
-    const newUser = await models.User.findByIdAndUpdate(req.user, { "profile": req.body });
+    const user = await models.User.findById(req.user);
+    const newUser = await models.User.findByIdAndUpdate(req.user, {
+      "profile": {
+        user,
+        ...req.body
+      }
+    }, {
+      "new": true,
+      "upsert": true
+    });
 
     if (!newUser) {
       res.json({
