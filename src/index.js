@@ -81,6 +81,17 @@ const app = express();
 // /////////////// //
 
 app.use(helmet());
+app.use(helmet.hpkp({
+  "maxAge": 7776000,
+  "sha256s": ["AbCdEf123=", "ZyXwVu456="]
+}));
+app.use(helmet.contentSecurityPolicy({
+  "directives": {
+    "defaultSrc": ["'self'"],
+    "styleSrc": ["'self'"]
+  }
+}));
+app.use(helmet.noCache());
 app.use(async (req, res, next) => {
   const signature = req.headers["x-hub-signature"];
 
