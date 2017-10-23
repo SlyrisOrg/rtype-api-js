@@ -1,8 +1,8 @@
-const verifyToken = (deps, configs) => async (req, res, next) => {
+const verifyTokenMiddleware = (deps, configs) => async (req, res, next) => {
   try {
     const data = await deps.jwt.verify(req.get("Token"), configs.server.secret);
 
-    if (!data) {
+    if (!data || !data._id) {
       res.json({
         "success": false,
         "payload": configs.payload.system.unvalidToken,
@@ -10,7 +10,7 @@ const verifyToken = (deps, configs) => async (req, res, next) => {
       });
     }
 
-    req.user = data.id;
+    req.user = deps.mongo.ObjectId(data._id);
     next();
   } catch (err) {
     deps.logger.error(`Token verify error: ${err}`);
@@ -45,15 +45,7 @@ const signin = (deps, models, configs) => async (req, res, next) => {
 
   deps.passport.authenticate("local", { "session": false }, (err, user) => {
     if (err) {
-      res.json({
-        "success": false,
-        "payload": configs.payload.system.internalError,
-        "content": {}
-      });
-      return;
-    }
-
-    if (!user) {
+      deps.logger.error(`Passport local error: ${err}`);
       res.json({
         "success": false,
         "payload": configs.payload.user.signin,
@@ -62,17 +54,19 @@ const signin = (deps, models, configs) => async (req, res, next) => {
       return;
     }
 
+    const token = deps.jwt.sign({
+      "_id": user.get("_id")
+    }, configs.server.secret, {
+      "expiresIn": 48 * 60 * 60
+    });
+
     res.json({
       "success": true,
       "payload": configs.payload.success,
       "content": {
-        "new": user.new,
-        "token": deps.jwt.sign({
-          "id": user._id
-        }, configs.server.secret, {
-          "expiresIn": 48 * 60 * 60
-        }),
-        "user": user.profile
+        "new": user.get("new"),
+        "token": token,
+        "user": user.get("profile")
       }
     });
   })(req, res, next);
@@ -107,39 +101,47 @@ const signup = (deps, models, configs) => async (req, res) => {
     "name": req.body.name,
     "email": req.body.email,
     "password": req.body.password
-  });
+  }).hashPassword();
 
   try {
-    const existingUser = await models.User.findOne({
+    const db = await deps.database();
+    const col = await db.collection(configs.database.mongo.collection.user);
+
+    const existingUser = await col.findOne({
       "$or": [
-        { "name": req.body.name },
-        { "email": req.body.email }
+        { "name": user.get("name") },
+        { "email": user.get("email") }
       ]
     });
 
-    if (existingUser.name === req.body.name) {
-      res.json({
-        "success": false,
-        "payload": configs.payload.input.name.alreadyTaken,
-        "content": {}
-      });
-      return;
+    if (existingUser) {
+      if (existingUser.name === user.get("name")) {
+        res.json({
+          "success": false,
+          "payload": configs.payload.input.name.alreadyTaken,
+          "content": {}
+        });
+        return;
+      }
+
+      if (existingUser.email === user.get("email")) {
+        res.json({
+          "success": false,
+          "payload": configs.payload.input.email.alreadyTaken,
+          "content": {}
+        });
+        return;
+      }
     }
 
-    if (existingUser.email === req.body.email) {
-      res.json({
-        "success": false,
-        "payload": configs.payload.input.email.alreadyTaken,
-        "content": {}
-      });
-      return;
-    }
+    col.insertOne(user.get());
 
-    await user.save();
+    db.close();
+
     res.json({
       "success": true,
       "payload": configs.payload.success,
-      "content": {}
+      "content": user.get()
     });
   } catch (err) {
     deps.logger.error(`Signup user error: ${err}`);
@@ -153,21 +155,19 @@ const signup = (deps, models, configs) => async (req, res) => {
 
 const getUserData = (deps, models, configs) => async (req, res) => {
   try {
-    const data = await models.User.findById(req.user);
+    const db = await deps.database();
+    const col = await db.collection(configs.database.mongo.collection.user);
 
-    if (!data) {
-      res.json({
-        "success": false,
-        "payload": configs.payload.user.data.get,
-        "content": {}
-      });
-      return;
-    }
+    const databaseUser = await col.findOne({ "_id": req.user });
+
+    db.close();
+
+    const user = new models.User(databaseUser);
 
     res.json({
       "success": true,
       "payload": configs.payload.success,
-      "content": data.profile
+      "content": user.get()
     });
   } catch (err) {
     deps.logger.error(`Get user error: ${err}`);
@@ -181,29 +181,24 @@ const getUserData = (deps, models, configs) => async (req, res) => {
 
 const updateUserData = (deps, models, configs) => async (req, res) => {
   try {
-    const user = await models.User.findById(req.user);
-    const newUser = await models.User.findByIdAndUpdate(req.user, {
-      "profile": {
-        ...user.profile,
-        ...req.body
-      }
-    }, {
-      "new": true,
-      "upsert": true
+    const db = await deps.database();
+    const col = await db.collection(configs.database.mongo.collection.user);
+
+    const databaseUser = await col.findOne({ "_id": req.user });
+
+    const user = new models.User({
+      ...databaseUser,
+      ...req.body
     });
 
-    if (!newUser) {
-      res.json({
-        "success": true,
-        "payload": configs.payload.user.data.put,
-        "content": {}
-      });
-    }
+    await col.findOneAndUpdate(req.user, user.get());
+
+    db.close();
 
     res.json({
       "success": true,
       "payload": configs.payload.success,
-      "content": newUser.profile
+      "content": user.get()
     });
   } catch (err) {
     deps.logger.error(`Update user error: ${err}`);
@@ -234,58 +229,52 @@ const createUserData = (deps, models, configs) => async (req, res) => {
   }
 
   try {
-    const user = await models.User.findById(req.user);
+    const db = await deps.database();
+    const col = await db.collection(configs.database.mongo.collection.user);
 
-    if (!user.new) {
+    const databaseUser = await col.findOne({ "_id": req.user });
+
+    const user = new models.User({
+      ...databaseUser,
+      ...req.body
+    });
+
+    if (!user.get("new")) {
       res.json({
-        "success": true,
+        "success": false,
         "payload": configs.payload.user.data.post,
         "content": {}
       });
       return;
     }
 
-    const existingPseudo = await models.User.find({ "pseudo": req.body.pseudo });
+    const existingPseudo = await col.findOne({ "pseudo": req.body.pseudo });
 
-    if (Object.keys(existingPseudo).length) {
+    if (existingPseudo) {
       res.json({
-        "success": true,
+        "success": false,
         "payload": configs.payload.input.pseudo.alreadyTaken,
         "content": {}
       });
       return;
     }
 
-    if (!req.body.profile) {
-      res.json({
-        "success": true,
-        "payload": configs.payload.user.data.post,
-        "content": {}
-      });
-      return;
-    }
-
-    const newUser = await models.User.findByIdAndUpdate(req.user, {
-      "new": false,
-      "pseudo": req.body.pseudo,
-      "profile": {
-        ...user.profile,
-        ...req.body.profile
-      }
+    const newUser = new models.User({
+      ...user.get(),
+      "_id": user.get("_id"),
+      "new": false
     });
 
-    if (!newUser) {
-      res.json({
-        "success": true,
-        "payload": configs.payload.user.data.post,
-        "content": {}
-      });
-    }
+    await col.findOneAndUpdate({
+      "_id": user.get("_id")
+    }, newUser.get());
+
+    db.close();
 
     res.json({
       "success": true,
       "payload": configs.payload.success,
-      "content": newUser.profile
+      "content": newUser.get()
     });
   } catch (err) {
     deps.logger.error(`Create user error: ${err}`);
@@ -298,11 +287,9 @@ const createUserData = (deps, models, configs) => async (req, res) => {
 };
 
 export default (deps, models, configs) => (router) => {
-  const verifyTokenMiddleware = verifyToken(deps, configs);
-
-  router.get("/", verifyTokenMiddleware, getUserData(deps, models, configs));
-  router.put("/", verifyTokenMiddleware, updateUserData(deps, models, configs));
-  router.post("/", verifyTokenMiddleware, createUserData(deps, models, configs));
+  router.get("/", verifyTokenMiddleware(deps, configs), getUserData(deps, models, configs));
+  router.put("/", verifyTokenMiddleware(deps, configs), updateUserData(deps, models, configs));
+  router.post("/", verifyTokenMiddleware(deps, configs), createUserData(deps, models, configs));
 
   router.post("/signin", signin(deps, models, configs));
   router.post("/signup", signup(deps, models, configs));

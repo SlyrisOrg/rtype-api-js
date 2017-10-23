@@ -1,14 +1,18 @@
-export default (deps, models) => {
+export default (deps, models, configs) => {
   deps.passport.use(new deps.passportLocal.Strategy({
     "usernameField": "name",
     "passwordField": "password",
     "session": false
   }, async (name, password, done) => {
     try {
-      const user = await models.User.findOne({ name });
+      const db = await deps.database();
+      const col = await db.collection(configs.database.mongo.collection.user);
+
+      const databaseUser = await col.findOne({ name });
+      const user = new models.User(databaseUser);
 
       if (!user) {
-        done(null, false);
+        done("Unmatch user", null);
         return;
       }
 
@@ -18,9 +22,9 @@ export default (deps, models) => {
         return;
       }
 
-      done(null, false);
+      done(null, null);
     } catch (err) {
-      done(err, false);
+      done(err, null);
     }
   }));
 };

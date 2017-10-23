@@ -19,8 +19,8 @@ import bodyParser from "body-parser";
 import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
+import mongo from "mongodb";
 import winston from "winston";
-import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import passport from "passport";
 import passportLocal from "passport-local";
@@ -34,6 +34,8 @@ import expressValidator from "express-validator";
 import configModule from "./modules/config";
 import loggerModule from "./modules/logger";
 import userModule from "./modules/user";
+import helperModule from "./modules/helper";
+import databaseModule from "./modules/database";
 
 // /////////// //
 // CONTROLLERS //
@@ -53,34 +55,43 @@ import userModel from "./models/user";
 
 import generalConfig from "./configs/general.json";
 import payloadConfig from "./configs/payload.json";
+import userModelConfig from "./configs/userModel.json";
 
 // //////////////// //
 // INITIALS MODULES //
 // //////////////// //
 
+
+const helper = helperModule();
+
 const config = configModule({
-  dotenv
+  dotenv,
+  helper
 }, {
   "general": generalConfig,
-  "payload": payloadConfig
+  "payload": payloadConfig,
+  "model": {
+    "user": userModelConfig
+  }
 });
 
 const logger = loggerModule({
   winston
 }, config);
 
-// ////////////////////// //
-// MONGOOSE CONFIGURATION //
-// ////////////////////// //
-
-mongoose.Promise = Promise;
-mongoose.connect(config.database.mongo.uri, { "useMongoClient": true });
-
+const database = databaseModule({
+  mongo
+}, config);
+global.ObjectId = mongo.ObjectId;
 // ////// //
 // MODELS //
 // ////// //
 
-const User = userModel({ mongoose, bcrypt });
+const User = userModel({
+  bcrypt,
+  helper,
+  mongo
+}, config);
 
 // ////////////////////// //
 // PASSPORT CONFIGURATION //
@@ -88,7 +99,9 @@ const User = userModel({ mongoose, bcrypt });
 
 userModule({
   passport,
-  passportLocal
+  passportLocal,
+  database,
+  logger
 }, {
   User
 }, config);
@@ -204,7 +217,9 @@ app.use("/", express.static(path.resolve(process.cwd(), "public")));
 app.use("/api/user", userController({
   passport,
   logger,
-  jwt
+  jwt,
+  database,
+  mongo
 }, {
   User
 }, config)(express.Router()));

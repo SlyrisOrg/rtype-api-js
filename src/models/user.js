@@ -1,53 +1,52 @@
-export default (deps) => {
-  const userSchema = new deps.mongoose.Schema({
-    "new": { "type": Boolean, "default": true },
-    "email": { "type": String, "default": "", "unique": true },
-    "name": { "type": String, "default": "", "unique": true },
-    "pseudo": { "type": String, "default": "", "unique": true },
-    "password": { "type": String, "default": "" },
-    "passwordResetToken": { "type": String, "default": "" },
-    "passwordResetExpires": { "type": Date, "default": new Date() },
+export default (deps, configs) => {
+  const hashPassword = (password) => {
+    const salt = deps.bcrypt.genSaltSync(10);
+    const hash = deps.bcrypt.hashSync(password, salt);
 
-    "facebook": { "type": String, "default": "" },
-    "twitter": { "type": String, "default": "" },
-    "google": { "type": String, "default": "" },
-    "tokens": { "type": Array, "default": [] },
-
-    "profile": {
-      "faction": { "type": String, "default": "" },
-      "level": { "type": Number, "default": 0 },
-      "gold": { "type": Number, "default": 0 },
-      "friends": { "type": Array, "default": [] },
-      "ship": {
-        "skin": { "type": Number, "default": 0 },
-        "stats": { "type": Array, "default": {} }
-      }
-    }
-  }, {
-    "minimize": false,
-    "timestamps": true,
-    "collection": "user"
-  });
-
-  userSchema.pre("save", async function save(next) {
-    if (!this.isModified("password")) {
-      next();
-      return;
-    }
-
-    try {
-      const salt = await deps.bcrypt.genSalt(10);
-      const hash = await deps.bcrypt.hash(this.password, salt, undefined);
-      this.password = hash;
-      next();
-    } catch (err) {
-      next(err);
-    }
-  });
-
-  userSchema.methods.verifyPassword = async function verifyPassword(password) {
-    return deps.bcrypt.compare(password, this.password);
+    return hash;
   };
 
-  return deps.mongoose.model("User", userSchema);
+  const verifyPassword = (challenger, password) =>
+    deps.bcrypt.compareSync(challenger, password);
+
+  return function User(user) {
+    this.data = Object.freeze(deps.helper.verifyObject({
+      ...configs.model.user,
+      ...user,
+      "createdAt": user.createdAt || new Date(),
+      "modifiedAt": new Date()
+    }));
+
+    return {
+      "verifyPassword": challenger =>
+        verifyPassword(challenger, this.data.password),
+      "hashPassword": () =>
+        new User({
+          ...this.data,
+          "password": hashPassword(this.data.password)
+        }),
+      "get": (key) => {
+        if (key) {
+          return this.data[key];
+        }
+
+        const { _id, ...sanitizeData } = this.data;
+
+        return sanitizeData;
+      },
+      "set": (elements) => {
+        const elementArray = Array.isArray(elements)
+          ? elements
+          : [elements];
+
+        return new User({
+          ...this.data,
+          ...elementArray.reduce((value, acc, key) => ({
+            ...acc,
+            [key]: value
+          }), {})
+        });
+      }
+    };
+  };
 };

@@ -1,0 +1,26 @@
+{
+  "_id": 0,
+
+  "new": true,
+  "email": "",
+  "name": "",
+  "pseudo": "",
+  "password": "",
+
+  "facebook": "",
+  "twitter": "",
+  "google": "",
+  "tokens": [],
+
+  "profile": {
+    "faction": "",
+    "level": 0,
+    "gold": 0,
+    "items": [],
+    "friends": [],
+    "ship": []
+  },
+
+  "createAt": "",
+  "modifiedAt": ""
+}

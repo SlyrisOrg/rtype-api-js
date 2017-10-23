@@ -22,7 +22,6 @@
     "minify-simplify",
     "transform-property-literals",
     "transform-regexp-constructors",
-    "transform-remove-console",
     "transform-remove-debugger",
     "transform-undefined-to-void"
   ],
