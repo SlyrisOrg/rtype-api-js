@@ -22,8 +22,6 @@ import morgan from "morgan";
 import mongo from "mongodb";
 import winston from "winston";
 import bcrypt from "bcrypt";
-import passport from "passport";
-import passportLocal from "passport-local";
 import dotenv from "dotenv";
 import expressValidator from "express-validator";
 
@@ -33,21 +31,13 @@ import expressValidator from "express-validator";
 
 import configModule from "./modules/config";
 import loggerModule from "./modules/logger";
-import userModule from "./modules/user";
-import helperModule from "./modules/helper";
 import databaseModule from "./modules/database";
 
 // /////////// //
 // CONTROLLERS //
 // /////////// //
 
-import userController from "./controllers/user";
-
-// ////// //
-// MODELS //
-// ////// //
-
-import userModel from "./models/user";
+import userRoute from "./routes/user";
 
 // /////// //
 // CONFIGS //
@@ -55,24 +45,16 @@ import userModel from "./models/user";
 
 import generalConfig from "./configs/general.json";
 import payloadConfig from "./configs/payload.json";
-import userModelConfig from "./configs/userModel.json";
 
-// //////////////// //
-// INITIALS MODULES //
-// //////////////// //
-
-
-const helper = helperModule();
+// ////////////////// //
+// INITIALIZE MODULES //
+// ////////////////// //
 
 const config = configModule({
-  dotenv,
-  helper
+  dotenv
 }, {
   "general": generalConfig,
-  "payload": payloadConfig,
-  "model": {
-    "user": userModelConfig
-  }
+  "payload": payloadConfig
 });
 
 const logger = loggerModule({
@@ -81,29 +63,6 @@ const logger = loggerModule({
 
 const database = databaseModule({
   mongo
-}, config);
-global.ObjectId = mongo.ObjectId;
-// ////// //
-// MODELS //
-// ////// //
-
-const User = userModel({
-  bcrypt,
-  helper,
-  mongo
-}, config);
-
-// ////////////////////// //
-// PASSPORT CONFIGURATION //
-// ////////////////////// //
-
-userModule({
-  passport,
-  passportLocal,
-  database,
-  logger
-}, {
-  User
 }, config);
 
 // /////////// //
@@ -136,8 +95,6 @@ app.use(async (req, res, next) => {
     "payload": config.payload.system.unvalidSignature
   });
 });
-app.use(passport.initialize());
-
 // ///////////// //
 // PARSER LAYERS //
 // ///////////// //
@@ -166,37 +123,10 @@ app.use((error, req, res, next) => {
 // ///////////// //
 
 app.use(morgan("combined", { "stream": { "write": message => logger.info(message) } }));
-
-if (!config.server.production) {
-  app.use((req, res, next) => {
-    logger.debug(req.body);
-    next();
-  });
-  app.use((req, res, next) => {
-    const chunks = [];
-
-    const oldWrite = res.write;
-    res.write = function write(chunk, ...args) {
-      chunks.push(chunk);
-
-      oldWrite.apply(res, [chunk, args]);
-    };
-
-    const oldEnd = res.end;
-    res.end = function end(chunk, ...args) {
-      if (chunk) {
-        chunks.push(chunk);
-      }
-
-      const body = Buffer.concat(chunks).toString("utf8");
-      logger.debug(JSON.parse(body));
-
-      oldEnd.apply(res, [chunk, args]);
-    };
-
-    next();
-  });
-}
+app.use((req, res, next) => {
+  logger.debug(req.body);
+  next();
+});
 
 // //////////////////////// //
 // HELPERS ROUTER INJECTION //
@@ -214,14 +144,12 @@ app.use("/", express.static(path.resolve(process.cwd(), "public")));
 // CONTROLLER ENDPOINT //
 // /////////////////// //
 
-app.use("/api/user", userController({
-  passport,
+app.use("/api/user", userRoute({
   logger,
   jwt,
   database,
-  mongo
-}, {
-  User
+  mongo,
+  bcrypt
 }, config)(express.Router()));
 
 // //////////////// //

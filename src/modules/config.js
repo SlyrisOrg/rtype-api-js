@@ -1,3 +1,14 @@
+const verifyObject = (objectToVerify) => {
+  const errors = Object.keys(objectToVerify)
+    .filter(configIndex => typeof objectToVerify[configIndex] === "undefined");
+
+  if (errors.lenght) {
+    throw new Error(`Error in configurations: ${errors}`);
+  }
+
+  return objectToVerify;
+};
+
 export default (deps, configs) => {
   // ////// //
   // DOTENV //
@@ -6,7 +17,7 @@ export default (deps, configs) => {
   deps.dotenv.config();
 
   return {
-    "server": deps.helper.verifyObject({
+    "server": verifyObject({
       "env": process.env.NODE_ENV,
       "production": process.env.NODE_ENV === "production",
       "port": process.env.PORT,
@@ -18,7 +29,7 @@ export default (deps, configs) => {
         "cert": process.env.SSL_CERTIFICAT
       }
     }),
-    "database": deps.helper.verifyObject({
+    "database": verifyObject({
       "mongo": {
         "uri": process.env.MONGO_URI,
         "collection": {
@@ -26,7 +37,6 @@ export default (deps, configs) => {
         }
       }
     }),
-    "payload": deps.helper.verifyObject(configs.payload),
-    "model": deps.helper.verifyObject(configs.model)
+    "payload": verifyObject(configs.payload)
   };
 };
