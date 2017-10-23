@@ -1,8 +1,6 @@
 const verifyToken = (deps, configs) => async (req, res, next) => {
-  const token = req.get("Token");
-
   try {
-    const data = await deps.jwt.verify(token, configs.server.secret);
+    const data = await deps.jwt.verify(req.get("Token"), configs.server.secret);
 
     if (!data) {
       res.json({
@@ -119,10 +117,19 @@ const signup = (deps, models, configs) => async (req, res) => {
       ]
     });
 
-    if (existingUser) {
+    if (existingUser.name === req.body.name) {
       res.json({
         "success": false,
-        "payload": configs.payload.user.signup,
+        "payload": configs.payload.input.name.alreadyTaken,
+        "content": {}
+      });
+      return;
+    }
+
+    if (existingUser.email === req.body.email) {
+      res.json({
+        "success": false,
+        "payload": configs.payload.input.email.alreadyTaken,
         "content": {}
       });
       return;
