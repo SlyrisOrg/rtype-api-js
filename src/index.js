@@ -23,7 +23,7 @@ import mongo from "mongodb";
 import winston from "winston";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
-import expressValidator from "express-validator";
+import validator from "validator";
 
 // ///////////// //
 // TIERS MODULES //
@@ -32,6 +32,7 @@ import expressValidator from "express-validator";
 import configModule from "./modules/config";
 import loggerModule from "./modules/logger";
 import databaseModule from "./modules/database";
+import verifierModule from "./modules/verifier";
 
 // /////////// //
 // CONTROLLERS //
@@ -63,6 +64,10 @@ const logger = loggerModule({
 
 const database = databaseModule({
   mongo
+}, config);
+
+const verifier = verifierModule({
+  validator
 }, config);
 
 // /////////// //
@@ -128,12 +133,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// //////////////////////// //
-// HELPERS ROUTER INJECTION //
-// //////////////////////// //
-
-app.use(expressValidator());
-
 // /////////////// //
 // STATIC ENDPOINT //
 // /////////////// //
@@ -149,7 +148,8 @@ app.use("/api/user", userRoute({
   jwt,
   database,
   mongo,
-  bcrypt
+  bcrypt,
+  verifier
 }, config)(express.Router()));
 
 // //////////////// //

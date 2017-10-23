@@ -6,23 +6,18 @@
  *
  * @return {Function}
  */
-export const postCheckerMiddleware = (deps, configs) => (req, res, next) => {
-  req.assert("name", configs.payload.input.name.empty).notEmpty();
-  req.assert("name", configs.payload.input.name.badFormat).isLength({ "min": 3, "max": 20 });
-  req.assert("name", configs.payload.input.name.badFormat).isAlphanumeric();
-
-  req.assert("password", configs.payload.input.password.empty).notEmpty();
-  req.assert("password", configs.payload.input.password.badFormat).isLength({ "min": 4, "max": 16 });
-
-  const errors = req.validationErrors();
+export const postCheckerMiddleware = deps => (req, res, next) => {
+  const errors = deps.verifier({
+    "name": req.body.name,
+    "password": req.body.password,
+    "email": req.body.email
+  });
 
   if (errors.length) {
-    const allErrors = errors.map(e => e.msg);
-
     res.json({
       "success": false,
-      "payload": allErrors[0],
-      "message": "Couldn't validate input data for signin",
+      "payload": errors[0],
+      "message": `Couldn't ${errors.length} validate input data for signin`,
       "content": {},
       "timestamp": new Date()
     });

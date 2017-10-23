@@ -105,19 +105,15 @@ export const put = (deps, configs) => async (req, res) => {
  *
  * @return {Function}
  */
-export const postcheckerMiddleware = (deps, configs) => (req, res, next) => {
-  req.assert("pseudo", configs.payload.input.pseudo.empty).notEmpty();
-  req.assert("pseudo", configs.payload.input.pseudo.badFormat).isLength({ "min": 3, "max": 20 });
-  req.assert("pseudo", configs.payload.input.pseudo.badFormat).isAlphanumeric();
-
-  const errors = req.validationErrors();
+export const postcheckerMiddleware = deps => (req, res, next) => {
+  const errors = deps.verifier({
+    "pseudo": req.body.pseudo
+  });
 
   if (errors.length) {
-    const allErrors = errors.map(e => e.msg);
-
     res.json({
       "success": false,
-      "payload": allErrors[0],
+      "payload": errors[0],
       "message": "Not validate input data for user data initalization",
       "content": {},
       "timestamp": new Date()

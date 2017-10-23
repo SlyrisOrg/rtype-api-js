@@ -52,19 +52,19 @@ export default (deps, configs) => (router) => {
   router.post(
     "/",
     verifyTokenMiddleware(deps, configs),
-    userController.postcheckerMiddleware(deps, configs),
+    userController.postcheckerMiddleware(deps),
     userController.post(deps, configs)
   );
 
   router.post(
     "/signin",
-    userSigninController.postCheckerMiddleware(deps, configs),
+    userSigninController.postCheckerMiddleware(deps),
     userSigninController.post(deps, configs)
   );
 
   router.post(
     "/signup",
-    userSignupController.postCheckerMiddleware(deps, configs),
+    userSignupController.postCheckerMiddleware(deps),
     userSignupController.post(deps, configs)
   );
 
