@@ -1,4 +1,8 @@
 {
+  "success": {
+    "id": 0,
+    "name": "SUCCESS_REQUEST"
+  },
   "system": {
     "notFound": {
       "id": 101,
@@ -66,55 +70,25 @@
   "user": {
     "data": {
       "get": {
-        "success": {
-          "id": 601,
-          "name": "USER_GET_DATA_SUCCESS"
-        },
-        "fail": {
-          "id": 602,
-          "name": "USER_GET_DATA_FAIL"
-        }
+        "id": 601,
+        "name": "USER_GET_DATA_FAIL"
       },
       "put": {
-        "success": {
-          "id": 701,
-          "name": "USER_PUT_DATA_SUCCESS"
-        },
-        "fail": {
-          "id": 702,
-          "name": "USER_PUT_DATA_FAIL"
-        }
+        "id": 701,
+        "name": "USER_PUT_DATA_FAIL"
       },
       "post": {
-        "success": {
-          "id": 801,
-          "name": "USER_POST_DATA_SUCCESS"
-        },
-        "fail": {
-          "id": 802,
-          "name": "USER_POST_DATA_FAIL"
-        }
+        "id": 801,
+        "name": "USER_POST_DATA_FAIL"
       }
     },
     "signin": {
-      "success": {
-        "id": 901,
-        "name": "USER_SIGIN_SUCCESS"
-      },
-      "fail": {
-        "id": 902,
-        "name": "USER_SIGIN_FAIL"
-      }
+      "id": 901,
+      "name": "USER_SIGIN_FAIL"
     },
     "signup": {
-      "success": {
-        "id": 1001,
-        "name": "USER_SIGNUP_SUCCESS"
-      },
-      "fail": {
-        "id": 1002,
-        "name": "USER_SIGNUP_FAIL"
-      }
+      "id": 1001,
+      "name": "USER_SIGNUP_FAIL"
     }
   }
 }

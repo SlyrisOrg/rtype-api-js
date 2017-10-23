@@ -25,8 +25,6 @@ const verifyToken = (deps, configs) => async (req, res, next) => {
 };
 
 const signin = (deps, models, configs) => async (req, res, next) => {
-  const payload = configs.payload.user.signin;
-
   req.assert("name", configs.payload.input.name.empty).notEmpty();
   req.assert("name", configs.payload.input.name.badFormat).isLength({ "min": 3, "max": 20 });
   req.assert("name", configs.payload.input.name.badFormat).isAlphanumeric();
@@ -60,7 +58,7 @@ const signin = (deps, models, configs) => async (req, res, next) => {
     if (!user) {
       res.json({
         "success": false,
-        "payload": payload.fail,
+        "payload": configs.payload.user.signin,
         "content": {}
       });
       return;
@@ -68,7 +66,7 @@ const signin = (deps, models, configs) => async (req, res, next) => {
 
     res.json({
       "success": true,
-      "payload": payload.success,
+      "payload": configs.payload.success,
       "content": {
         "new": user.new,
         "token": deps.jwt.sign({
@@ -83,8 +81,6 @@ const signin = (deps, models, configs) => async (req, res, next) => {
 };
 
 const signup = (deps, models, configs) => async (req, res) => {
-  const payload = configs.payload.user.signup;
-
   req.assert("name", configs.payload.input.name.empty).notEmpty();
   req.assert("name", configs.payload.input.name.badFormat).isLength({ "min": 3, "max": 20 });
   req.assert("name", configs.payload.input.name.badFormat).isAlphanumeric();
@@ -126,7 +122,7 @@ const signup = (deps, models, configs) => async (req, res) => {
     if (existingUser) {
       res.json({
         "success": false,
-        "payload": payload.fail,
+        "payload": configs.payload.user.signup,
         "content": {}
       });
       return;
@@ -135,7 +131,7 @@ const signup = (deps, models, configs) => async (req, res) => {
     await user.save();
     res.json({
       "success": true,
-      "payload": payload.success,
+      "payload": configs.payload.success,
       "content": {}
     });
   } catch (err) {
@@ -149,15 +145,13 @@ const signup = (deps, models, configs) => async (req, res) => {
 };
 
 const getUserData = (deps, models, configs) => async (req, res) => {
-  const payload = configs.payload.user.data.get;
-
   try {
     const data = await models.User.findById(req.user);
 
     if (!data) {
       res.json({
         "success": false,
-        "payload": payload.fail,
+        "payload": configs.payload.user.data.get,
         "content": {}
       });
       return;
@@ -165,7 +159,7 @@ const getUserData = (deps, models, configs) => async (req, res) => {
 
     res.json({
       "success": true,
-      "payload": payload.success,
+      "payload": configs.payload.success,
       "content": data.profile
     });
   } catch (err) {
@@ -179,8 +173,6 @@ const getUserData = (deps, models, configs) => async (req, res) => {
 };
 
 const updateUserData = (deps, models, configs) => async (req, res) => {
-  const payload = configs.payload.user.data.put;
-
   try {
     const user = await models.User.findById(req.user);
     const newUser = await models.User.findByIdAndUpdate(req.user, {
@@ -196,14 +188,14 @@ const updateUserData = (deps, models, configs) => async (req, res) => {
     if (!newUser) {
       res.json({
         "success": true,
-        "payload": payload.fail,
+        "payload": configs.payload.user.data.put,
         "content": {}
       });
     }
 
     res.json({
       "success": true,
-      "payload": payload.success,
+      "payload": configs.payload.success,
       "content": newUser.profile
     });
   } catch (err) {
@@ -217,8 +209,6 @@ const updateUserData = (deps, models, configs) => async (req, res) => {
 };
 
 const createUserData = (deps, models, configs) => async (req, res) => {
-  const payload = configs.payload.user.data.post;
-
   req.assert("pseudo", configs.payload.input.pseudo.empty).notEmpty();
   req.assert("pseudo", configs.payload.input.pseudo.badFormat).isLength({ "min": 3, "max": 20 });
   req.assert("pseudo", configs.payload.input.pseudo.badFormat).isAlphanumeric();
@@ -242,7 +232,7 @@ const createUserData = (deps, models, configs) => async (req, res) => {
     if (!user.new) {
       res.json({
         "success": true,
-        "payload": payload.fail,
+        "payload": configs.payload.user.data.post,
         "content": {}
       });
       return;
@@ -251,7 +241,7 @@ const createUserData = (deps, models, configs) => async (req, res) => {
     if (!req.body.profile) {
       res.json({
         "success": true,
-        "payload": payload.fail,
+        "payload": configs.payload.user.data.post,
         "content": {}
       });
       return;
@@ -269,14 +259,14 @@ const createUserData = (deps, models, configs) => async (req, res) => {
     if (!newUser) {
       res.json({
         "success": true,
-        "payload": payload.fail,
+        "payload": configs.payload.user.data.post,
         "content": {}
       });
     }
 
     res.json({
       "success": true,
-      "payload": payload.success,
+      "payload": configs.payload.success,
       "content": newUser.profile
     });
   } catch (err) {
