@@ -227,6 +227,17 @@ const createUserData = (deps, models, configs) => async (req, res) => {
   }
 
   try {
+    const existingPseudo = await models.User.findBy({ "pseudo": req.body.pseudo });
+
+    if (existingPseudo) {
+      res.json({
+        "success": true,
+        "payload": configs.payload.input.pseudo.alreadyTaken,
+        "content": {}
+      });
+      return;
+    }
+
     const user = await models.User.findById(req.user);
 
     if (!user.new) {
