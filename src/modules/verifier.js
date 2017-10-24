@@ -1,38 +1,90 @@
-const isUserName = (deps, configs) => name => [
-  deps.validator.isEmpty(name)
-    && configs.payload.input.name.empty,
-  deps.validator.isLength(name, { "min": 3, "max": 20 })
-    && configs.payload.input.name.badFormat,
-  deps.validator.isAlphanumeric(name)
-    && configs.payload.input.name.badFormat
-];
+const isUserName = ({ validator }, configs) =>
+  async (name) => {
+    if (!name || validator.isEmpty(name)) {
+      throw configs.payload.emptyName;
+    }
 
-const isUserPassword = (deps, configs) => password => [
-  deps.validator.isEmpty(password)
-    && configs.payload.input.password.empty,
-  deps.validator.isLength(password, { "min": 3, "max": 20 })
-    && configs.payload.input.password.badFormat
-];
+    if (!validator.isLength(name, { min: 1, max: 25 })) {
+      throw configs.payload.badFormatName;
+    }
 
-const isUserEmail = (deps, configs) => email => [
-  deps.validator.isEmpty(email)
-    && configs.payload.input.email.empty,
-  deps.validator.isEmail(email)
-    && configs.payload.input.email.badFormat
-];
+    if (!validator.isAlphanumeric(name)) {
+      throw configs.payload.badFormatName;
+    }
 
-export default (deps, configs) => inputs =>
-  Object.keys(inputs)
-    .reduce((acc, input) => {
-      switch (input) {
-        case "name":
-          return [...acc, ...isUserName(deps, configs)(input)];
-        case "password":
-          return [...acc, ...isUserPassword(deps, configs)(input)];
-        case "email":
-          return [...acc, ...isUserEmail(deps, configs)(input)];
-        default:
-          return acc;
-      }
-    }, [])
-    .filter(input => !!input);
+    return name;
+  };
+
+const isUserPassword = ({ validator }, configs) =>
+  async (password) => {
+    if (!password || validator.isEmpty(password)) {
+      throw configs.payload.emptyPassword;
+    }
+
+    if (!validator.isLength(password, { min: 3, max: 20 })) {
+      throw configs.payload.badFormatPassword;
+    }
+
+    return password;
+  };
+
+const isUserEmail = ({ validator }, configs) =>
+  async (email) => {
+    if (!email || validator.isEmpty(email)) {
+      throw configs.payload.emptyEmail;
+    }
+
+    if (!validator.isEmail(email)) {
+      throw configs.payload.badFormatEmail;
+    }
+
+    return email;
+  };
+
+const isUserPseudo = ({ validator }, configs) =>
+  async (pseudo) => {
+    if (!pseudo || validator.isEmpty(pseudo)) {
+      throw configs.payload.emptyPseudo;
+    }
+
+    if (!validator.isLength(pseudo, { min: 1, max: 25 })) {
+      throw configs.payload.badFormatPseudo;
+    }
+
+    if (!validator.isAlphanumeric(pseudo)) {
+      throw configs.payload.badFormatPseudo;
+    }
+
+    return pseudo;
+  };
+
+export default (deps, configs) =>
+  async (inputs) => {
+    const pendingValues = Object.keys(inputs)
+      .map((key) => {
+        switch (key) {
+          case "name": {
+            return isUserName(deps, configs)(inputs[key]);
+          }
+          case "password": {
+            return isUserPassword(deps, configs)(inputs[key]);
+          }
+          case "email": {
+            return isUserEmail(deps, configs)(inputs[key]);
+          }
+          case "pseudo": {
+            return isUserPseudo(deps, configs)(inputs[key]);
+          }
+          default: {
+            return Promise.resolve(inputs[key]);
+          }
+        }
+      });
+
+    const values = await Promise.all(pendingValues);
+
+    return Object.keys(inputs).reduce((acc, key, i) => ({
+      ...acc,
+      [key]: values[i],
+    }), {});
+  };

@@ -1,109 +1,67 @@
-/**
- * Signin input checker middleware
- *
- * @param {Object} deps
- * @param {Object} configs
- *
- * @return {Function}
- */
-export const postCheckerMiddleware = deps => (req, res, next) => {
-  const errors = deps.verifier({
-    "name": req.body.name,
-    "password": req.body.password,
-    "email": req.body.email
-  });
+export default ({ verifier, database, logger }, configs) =>
+  async (req, res) => {
+    try {
+      if (!req.body.name && !req.body.email) {
+        throw configs.payload.emptyCredential;
+      }
 
-  if (errors.length) {
-    res.json({
-      "success": false,
-      "payload": errors[0],
-      "message": `Couldn't ${errors.length} validate input data for signin`,
-      "content": {},
-      "timestamp": new Date()
-    });
-    return;
-  }
+      const credentials = (req.body.name && { name: req.body.name })
+        || (req.body.email && { email: req.body.email });
 
-  next();
-};
-
-/**
- * Signin endpoint
- *
- * @param {Object} deps
- * @param {Object} configs
- *
- * @return {Function}
- */
-export const post = (deps, configs) => async (req, res) => {
-  try {
-    // Get current user data
-
-    const db = await deps.database();
-    const col = await db.collection(configs.database.mongo.collection.user);
-
-    // Check if email or name of user exist
-
-    const user = await col.findOne({
-      "$or": [
-        { "name": req.body.name },
-        { "email": req.body.email }
-      ]
-    });
-
-    if (!user) {
-      res.json({
-        "success": true,
-        "payload": configs.payload.user.signin,
-        "message": "Unmatch credentials",
-        "content": {},
-        "timestamp": new Date()
+      const body = await verifier({
+        ...credentials,
+        password: req.body.password,
       });
-      return;
-    }
 
-    // Check if password match
+      const token = await database.signinUser(body);
 
-    const isMatch = deps.bcrypt.compareSync(req.body.password, user.password);
-
-    if (!isMatch) {
-      res.json({
-        "success": false,
-        "payload": configs.payload.user.signin,
-        "message": "Wrong credentials",
-        "content": {},
-        "timestamp": new Date()
+      res.success({
+        content: {
+          token,
+        },
       });
-      return;
+    } catch (err) {
+      switch (err) {
+        case configs.payload.emptyCredential: {
+          res.error({
+            payload: err,
+            message: configs.message.emptyCredential,
+          });
+          break;
+        }
+        case configs.payload.emptyName: {
+          res.error({
+            payload: err,
+            message: configs.message.emptyName,
+          });
+          break;
+        }
+        case configs.payload.emptyEmail: {
+          res.error({
+            payload: err,
+            message: configs.message.emptyEmail,
+          });
+          break;
+        }
+        case configs.payload.emptyPassword: {
+          res.error({
+            payload: err,
+            message: configs.message.emptyPassword,
+          });
+          break;
+        }
+        case configs.payload.signinUser: {
+          res.error({
+            payload: err,
+            message: configs.message.signinUser,
+          });
+          break;
+        }
+        default: {
+          logger.error("Signin user route error:", err);
+          res.error();
+          break;
+        }
+      }
     }
-
-    // Prepare and send token
-
-    const token = deps.jwt.sign({
-      "_id": user._id
-    }, configs.server.secret, {
-      "expiresIn": 48 * 60 * 60
-    });
-
-    res.json({
-      "success": true,
-      "payload": configs.payload.success,
-      "message": "",
-      "content": {
-        "new": user.new,
-        "token": token,
-        "user": user.profile
-      },
-      "timestamp": new Date()
-    });
-  } catch (err) {
-    deps.logger.error(`Signin user error: ${err}`);
-    res.json({
-      "success": false,
-      "payload": configs.payload.system.internalError,
-      "message": "Signin route crashed",
-      "content": {},
-      "timestamp": new Date()
-    });
-  }
-};
+  };
