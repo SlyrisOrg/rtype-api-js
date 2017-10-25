@@ -1,5 +1,5 @@
-const getUserData = ({ mongo }, configs) =>
-  async (id) => {
+export default ({ mongo, bcrypt, jwt }, configs) => ({
+  getUserData: async (id) => {
     const db = await mongo.MongoClient.connect(configs.database.mongo.uri);
     const col = await db.collection(configs.database.mongo.collections.users);
 
@@ -18,10 +18,9 @@ const getUserData = ({ mongo }, configs) =>
     db.close();
 
     return user;
-  };
+  },
 
-const updateUserData = ({ mongo }, configs) =>
-  async (id, data) => {
+  updateUserData: async (id, data) => {
     const db = await mongo.MongoClient.connect(configs.database.mongo.uri);
     const col = await db.collection(configs.database.mongo.collections.users);
 
@@ -75,10 +74,9 @@ const updateUserData = ({ mongo }, configs) =>
     db.close();
 
     return true;
-  };
+  },
 
-const createUserData = ({ mongo }, configs) =>
-  async (id, data) => {
+  createUserData: async (id, data) => {
     const db = await mongo.MongoClient.connect(configs.database.mongo.uri);
     const col = await db.collection(configs.database.mongo.collections.users);
 
@@ -139,10 +137,9 @@ const createUserData = ({ mongo }, configs) =>
     // Send confirmation
 
     return true;
-  };
+  },
 
-const signupUser = ({ mongo, bcrypt }, configs) =>
-  async (data) => {
+  signupUser: async (data) => {
     const db = await mongo.MongoClient.connect(configs.database.mongo.uri);
     const col = await db.collection(configs.database.mongo.collections.users);
 
@@ -191,10 +188,9 @@ const signupUser = ({ mongo, bcrypt }, configs) =>
     }
 
     return true;
-  };
+  },
 
-const signinUser = ({ mongo, bcrypt, jwt }, configs) =>
-  async ({ name, email, password }) => {
+  signinUser: async ({ name, email, password }) => {
     const db = await mongo.MongoClient.connect(configs.database.mongo.uri);
     const col = await db.collection(configs.database.mongo.collections.users);
 
@@ -230,12 +226,5 @@ const signinUser = ({ mongo, bcrypt, jwt }, configs) =>
     });
 
     return token;
-  };
-
-export default (deps, configs) => ({
-  getUserData: getUserData(deps, configs),
-  updateUserData: updateUserData(deps, configs),
-  createUserData: createUserData(deps, configs),
-  signupUser: signupUser(deps, configs),
-  signinUser: signinUser(deps, configs),
+  },
 });
