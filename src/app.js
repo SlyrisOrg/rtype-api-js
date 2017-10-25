@@ -35,9 +35,11 @@ import mailerModule from "./modules/mailer";
 // MIDDLEWARES //
 // /////////// //
 
+import apiHeaderMiddleware from "./middlewares/apiHeader";
+import debugLoggerMiddleware from "./middlewares/debugLogger";
 import signatureMiddleware from "./middlewares/signature";
 import messengerMiddlware from "./middlewares/messenger";
-import parserErrorCatcher from "./middlewares/parserErrorCatcher";
+import parserErrorCatcherMiddlware from "./middlewares/parserErrorCatcher";
 
 // /////////// //
 // CONTROLLERS //
@@ -91,6 +93,16 @@ try {
     configs,
   });
 
+  const debugLogger = debugLoggerMiddleware({
+    logger,
+  });
+
+  const parserErrorCatcher = parserErrorCatcherMiddlware({
+    configs,
+  });
+
+  const apiHeader = apiHeaderMiddleware();
+
   // /////////////////// //
   // HANDLE PROCESS EXIT //
   // /////////////////// //
@@ -112,12 +124,6 @@ try {
     process.exit(1);
   });
 
-  app.set("views", path.resolve(process.cwd(), "src", "views"));
-
-  app.use((req, res, next) => {
-    res.set("Content-Type", "application/json");
-    next();
-  });
 
   // //////////////////// //
   // APPLICATION SETTINGS //
@@ -125,6 +131,7 @@ try {
 
   app.engine("js", messenger);
   app.set("view engine", "js");
+  app.set("views", path.resolve(process.cwd(), "src", "views"));
 
   // /////////////// //
   // SECURITY LAYERS //
@@ -148,11 +155,10 @@ try {
   // PARSER LAYERS //
   // ///////////// //
 
+  app.use(apiHeader());
   app.use(bodyParser.urlencoded({ extended: true, defer: true }));
   app.use(bodyParser.json({ type: "*/*" }));
-  app.use(parserErrorCatcher({
-    configs,
-  }));
+  app.use(parserErrorCatcher());
 
   // ///////////// //
   // HELPER LAYERS //
@@ -163,10 +169,7 @@ try {
       write: message => logger.info(message),
     },
   }));
-  app.use((req, res, next) => {
-    logger.debug(req.body);
-    next();
-  });
+  app.use(debugLogger());
 
   // /////////////////// //
   // CONTROLLER ENDPOINT //
