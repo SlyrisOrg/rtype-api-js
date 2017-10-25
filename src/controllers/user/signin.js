@@ -1,8 +1,8 @@
-export default ({ verifier, database, logger }, configs) =>
-  async (req, res) => {
+export default ({ verifier, database }, configs) => (
+  async (req, res, next) => {
     try {
       if (!req.body.name && !req.body.email) {
-        throw configs.payload.emptyCredential;
+        throw configs.message.emptyCredential;
       }
 
       const credentials = (req.body.name && { name: req.body.name })
@@ -21,47 +21,7 @@ export default ({ verifier, database, logger }, configs) =>
         },
       });
     } catch (err) {
-      switch (err) {
-        case configs.payload.emptyCredential: {
-          res.error({
-            payload: err,
-            message: configs.message.emptyCredential,
-          });
-          break;
-        }
-        case configs.payload.emptyName: {
-          res.error({
-            payload: err,
-            message: configs.message.emptyName,
-          });
-          break;
-        }
-        case configs.payload.emptyEmail: {
-          res.error({
-            payload: err,
-            message: configs.message.emptyEmail,
-          });
-          break;
-        }
-        case configs.payload.emptyPassword: {
-          res.error({
-            payload: err,
-            message: configs.message.emptyPassword,
-          });
-          break;
-        }
-        case configs.payload.signinUser: {
-          res.error({
-            payload: err,
-            message: configs.message.signinUser,
-          });
-          break;
-        }
-        default: {
-          logger.error("Signin user route error:", err);
-          res.error();
-          break;
-        }
-      }
+      res.render("error", err);
     }
-  };
+  }
+);

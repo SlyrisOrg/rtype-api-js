@@ -1,8 +1,8 @@
 import userSigninController from "./signin";
 import userSignupController from "./signup";
 
-export const userFetchController = ({ database, logger }, configs) =>
-  async (req, res) => {
+export const userFetchController = ({ database }) => (
+  async (req, res, next) => {
     try {
       const data = await database.getUserData(req.user);
 
@@ -10,33 +10,17 @@ export const userFetchController = ({ database, logger }, configs) =>
         content: data,
       });
     } catch (err) {
-      switch (err) {
-        case configs.payload.getUserData: {
-          res.error({
-            payload: err,
-            message: configs.message.getUserData,
-          });
-          break;
-        }
-        default: {
-          logger.error("Fetch user data error:", err);
-          res.error();
-          break;
-        }
-      }
+      res.render("error", err);
     }
-  };
+  }
+);
 
-export const userUpdateController = ({ database, logger, verifier }, configs) =>
-  async (req, res) => {
+export const userUpdateController = ({ database, verifier }) => (
+  async (req, res, next) => {
     const errors = verifier(req.body);
 
     if (errors.length) {
-      res.error({
-        payload: errors[0],
-        message: configs.message.input(errors.length),
-      });
-      return;
+      throw errors[0];
     }
 
     try {
@@ -44,33 +28,17 @@ export const userUpdateController = ({ database, logger, verifier }, configs) =>
 
       res.success();
     } catch (err) {
-      switch (err) {
-        case configs.payload.putUserData: {
-          res.error({
-            payload: err,
-            message: configs.message.putUserData,
-          });
-          break;
-        }
-        default: {
-          logger.error("Update user data error:", err);
-          res.error();
-          break;
-        }
-      }
+      res.render("error", err);
     }
-  };
+  }
+);
 
-export const userCreateController = ({ verifier, database, logger }, configs) =>
-  async (req, res) => {
+export const userCreateController = ({ verifier, database }) => (
+  async (req, res, next) => {
     const errors = verifier(req.body);
 
     if (errors.length) {
-      res.error({
-        payload: errors[0],
-        message: configs.message.input(errors.length),
-      });
-      return;
+      throw errors[0];
     }
 
     try {
@@ -78,56 +46,30 @@ export const userCreateController = ({ verifier, database, logger }, configs) =>
 
       res.success();
     } catch (err) {
-      switch (err) {
-        case configs.payload.alreadyTakenPseudo: {
-          res.error({
-            payload: err,
-            message: configs.message.alreadyTakenPseudo,
-          });
-          break;
-        }
-        case configs.payload.postUserData: {
-          res.error({
-            payload: err,
-            message: configs.message.postUserData,
-          });
-          break;
-        }
-        default: {
-          logger.error("Create user data error:", err);
-          res.error();
-          break;
-        }
-      }
+      res.render("error", err);
     }
-  };
+  }
+);
 
-const verifyTokenMiddleware = ({ jwt }, configs) =>
+const verifyTokenMiddleware = ({ jwt }, configs) => (
   async (req, res, next) => {
     try {
       const token = req.get("Authorization").substring(4);
       const data = await jwt.verify(token, configs.server.secret);
 
       if (!data || !data._id) {
-        res.json({
-          success: false,
-          payload: configs.payload.unvalidToken,
-          content: {},
-        });
-        return;
+        throw configs.message.unvalidToken.payload;
       }
 
       req.user = data._id;
       next();
     } catch (err) {
-      res.error({
-        payload: configs.payload.unvalidToken,
-        message: configs.message.unvalidToken,
-      });
+      res.render("error", err);
     }
-  };
+  }
+);
 
-export default (deps, configs) =>
+export default (deps, configs) => (
   (router) => {
     router.get(
       "/",
@@ -158,4 +100,5 @@ export default (deps, configs) =>
     );
 
     return router;
-  };
+  }
+);

@@ -29,8 +29,15 @@ import configsModule from "./modules/configs";
 import loggerModule from "./modules/logger";
 import databaseModule from "./modules/database";
 import verifierModule from "./modules/verifier";
-import messengerModule from "./modules/messenger";
 import mailerModule from "./modules/mailer";
+import guidModule from "./modules/guid";
+
+// /////////// //
+// MIDDLEWARES //
+// /////////// //
+
+import signatureMiddleware from "./middlewares/signature";
+import messengerMiddlware from "./middlewares/messenger";
 
 // /////////// //
 // CONTROLLERS //
@@ -44,18 +51,18 @@ import userController from "./controllers/user";
 
 import serverConfig from "./configs/server";
 import databaseConfig from "./configs/database";
-import payloadConfig from "./configs/payload";
 import messageConfig from "./configs/message";
 
 // ////////////////// //
 // INITIALIZE MODULES //
 // ////////////////// //
 
+const guid = guidModule();
+
 const configs = configsModule({
   dotenv,
 }, {
   server: serverConfig,
-  payload: payloadConfig,
   database: databaseConfig,
   message: messageConfig,
 });
@@ -78,11 +85,21 @@ const mailer = mailerModule({
   nodemailer,
 }, configs);
 
+const signature = signatureMiddleware({
+  bcrypt,
+}, configs);
+
+const messenger = messengerMiddlware({
+  guid,
+}, configs);
+
 // /////////// //
 // APPLICATION //
 // /////////// //
 
 const app = express();
+
+app.engine("js", messenger);
 
 // /////////////////// //
 // HANDLE PROCESS EXIT //
@@ -106,6 +123,13 @@ process.on("unhandledRejection", (reason, p) => {
 });
 
 try {
+  app.set("views", path.resolve(process.cwd(), "src", "views"));
+
+  app.use((req, res, next) => {
+    res.set("Content-Type", "application/json");
+    next();
+  });
+
   // /////////////// //
   // SECURITY LAYERS //
   // /////////////// //
@@ -122,26 +146,7 @@ try {
     },
   }));
   app.use(helmet.noCache());
-  app.use(async (req, res, next) => {
-    const signature = req.headers["x-hub-signature"];
-
-    if (signature) {
-      const elements = signature.split("=");
-      const password = elements[1] || signature;
-      const isMatch = await bcrypt.compare(password, configs.server.signature);
-
-      if (isMatch) {
-        next();
-        return;
-      }
-    }
-
-    res.error({
-      success: false,
-      message: configs.message.unvalidSignature,
-      payload: configs.payload.unvalidSignature,
-    });
-  });
+  app.use(signature);
 
   // ///////////// //
   // PARSER LAYERS //
@@ -151,12 +156,7 @@ try {
   app.use(bodyParser.json({ type: "*/*" }));
   app.use((error, req, res, next) => {
     if (error instanceof SyntaxError) {
-      res.error({
-        success: false,
-        message: configs.message.badRequest,
-        payload: configs.payload.badRequest,
-        content: {},
-      });
+      res.render("error", configs.message.badRequest.payload);
       return;
     }
     next();
@@ -175,7 +175,6 @@ try {
     logger.debug(req.body);
     next();
   });
-  app.use(messengerModule(configs));
 
   // /////////////////// //
   // CONTROLLER ENDPOINT //
@@ -189,11 +188,7 @@ try {
     verifier,
   }, configs)(express.Router()));
   app.use("*", (req, res) => {
-    res.error({
-      success: false,
-      message: configs.message.notFound(req.method),
-      payload: configs.payload.notFound,
-    });
+    res.render("error", configs.message.notFound.payload);
   });
 
   // /////////////// //

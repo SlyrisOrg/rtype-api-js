@@ -10,7 +10,7 @@ export default ({ mongo, bcrypt, jwt }, configs) => ({
     });
 
     if (!user) {
-      throw configs.payload.getUserData;
+      throw configs.message.getUserData;
     }
 
     // Close connection
@@ -46,15 +46,15 @@ export default ({ mongo, bcrypt, jwt }, configs) => ({
 
     if (availableData) {
       if (availableData.pseudo === data.pseudo) {
-        throw configs.payload.alreadyTakenPseudo;
+        throw configs.message.alreadyTakenPseudo;
       }
 
       if (availableData.name === data.name) {
-        throw configs.payload.alreadyTakenName;
+        throw configs.message.alreadyTakenName;
       }
 
       if (availableData.email === data.email) {
-        throw configs.payload.alreadyTakenEmail;
+        throw configs.message.alreadyTakenEmail;
       }
     }
 
@@ -87,7 +87,7 @@ export default ({ mongo, bcrypt, jwt }, configs) => ({
     // Check if is new player
 
     if (!databaseUser.new) {
-      throw configs.payload.postData;
+      throw configs.message.postData;
     }
 
     // Check if available data
@@ -106,15 +106,15 @@ export default ({ mongo, bcrypt, jwt }, configs) => ({
 
     if (availableData) {
       if (availableData.pseudo === data.pseudo) {
-        throw configs.payload.alreadyTakenPseudo;
+        throw configs.message.alreadyTakenPseudo;
       }
 
       if (availableData.name === data.name) {
-        throw configs.payload.alreadyTakenName;
+        throw configs.message.alreadyTakenName;
       }
 
       if (availableData.email === data.email) {
-        throw configs.payload.alreadyTakenEmail;
+        throw configs.message.alreadyTakenEmail;
       }
     }
 
@@ -157,11 +157,11 @@ export default ({ mongo, bcrypt, jwt }, configs) => ({
 
     if (availableData) {
       if (availableData.name === data.name) {
-        throw configs.payload.alreadyTakenName;
+        throw configs.message.alreadyTakenName;
       }
 
       if (availableData.email === data.email) {
-        throw configs.payload.alreadyTakenEmail;
+        throw configs.message.alreadyTakenEmail;
       }
     }
 
@@ -184,7 +184,7 @@ export default ({ mongo, bcrypt, jwt }, configs) => ({
     db.close();
 
     if (!isSuccess) {
-      throw configs.payload.signupUser;
+      throw configs.message.signupUser;
     }
 
     return true;
@@ -208,7 +208,7 @@ export default ({ mongo, bcrypt, jwt }, configs) => ({
     db.close();
 
     if (!user) {
-      throw configs.payload.signinUser;
+      throw configs.message.signinUser;
     }
 
     // Check if password match
@@ -216,7 +216,7 @@ export default ({ mongo, bcrypt, jwt }, configs) => ({
     const isMatch = bcrypt.compareSync(password, user.password);
 
     if (!isMatch) {
-      throw configs.payload.signinUser;
+      throw configs.message.signinUser;
     }
 
     const token = jwt.sign({

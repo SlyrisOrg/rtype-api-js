@@ -22,7 +22,8 @@ const verifyConfigs = (configs) => {
 export default (deps, configsList) => {
   deps.dotenv.config();
 
-  const validedConfigsList = Object.keys(configsList)
+  const validedConfigsList = Object
+    .keys(configsList)
     .reduce((configs, index) => {
       const unpackedConfigs = configsList[index]();
       const validedConfigs = verifyConfigs(unpackedConfigs);

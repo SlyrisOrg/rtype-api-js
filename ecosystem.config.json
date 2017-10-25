@@ -1,0 +1,36 @@
+{
+  "apps": [
+    {
+      "name": "RType-API",
+      "script": "./src/dist.js",
+      "watch": true,
+      "env": {
+        "NODE_ENV": "development",
+        "PORT": "8585",
+        "MONGO_URI": "mongodb://localhost/rtype"
+      },
+      "env_production": {
+        "NODE_ENV": "production",
+        "MONGO_URI": "mongodb://database/rtype"
+      }
+    }
+  ],
+  "deploy": {
+    "production": {
+      "user": "node",
+      "host": "212.83.163.1",
+      "ref": "origin/master",
+      "repo": "git@github.com:SlyrisCorp/rtype-api-js.git",
+      "path": "/var/www/production",
+      "post-deploy": "npm install && pm2 reload ecosystem.config.json --env production"
+    },
+    "dev": {
+      "user": "asuramaru",
+      "host": "localhost",
+      "ref": "origin/master",
+      "repo": "git@github.com:SlyrisCorp/rtype-api-js.git",
+      "path": "/var/www/development",
+      "post-deploy": "npm install && pm2 reload ecosystem.config.json --env dev"
+    }
+  }
+}
