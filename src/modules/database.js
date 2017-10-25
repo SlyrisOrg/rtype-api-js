@@ -31,6 +31,34 @@ const updateUserData = ({ mongo }, configs) =>
       password: false,
     });
 
+    // Check if available data
+
+    const availableData = await col.findOne({
+      $or: [
+        { pseudo: data.pseudo },
+        { name: data.name },
+        { email: data.email },
+      ],
+    }, {
+      pseudo: true,
+      name: true,
+      email: true,
+    });
+
+    if (availableData) {
+      if (availableData.pseudo === data.pseudo) {
+        throw configs.payload.alreadyTakenPseudo;
+      }
+
+      if (availableData.name === data.name) {
+        throw configs.payload.alreadyTakenName;
+      }
+
+      if (availableData.email === data.email) {
+        throw configs.payload.alreadyTakenEmail;
+      }
+    }
+
     // Send current user data to database
 
     const newUserData = {
@@ -64,12 +92,32 @@ const createUserData = ({ mongo }, configs) =>
       throw configs.payload.postData;
     }
 
-    // Check if pseudo is available
+    // Check if available data
 
-    const existingPseudo = await col.findOne({ pseudo: data.pseudo });
+    const availableData = await col.findOne({
+      $or: [
+        { pseudo: data.pseudo },
+        { name: data.name },
+        { email: data.email },
+      ],
+    }, {
+      pseudo: true,
+      name: true,
+      email: true,
+    });
 
-    if (existingPseudo) {
-      throw configs.payload.alreadyTakenPseudo;
+    if (availableData) {
+      if (availableData.pseudo === data.pseudo) {
+        throw configs.payload.alreadyTakenPseudo;
+      }
+
+      if (availableData.name === data.name) {
+        throw configs.payload.alreadyTakenName;
+      }
+
+      if (availableData.email === data.email) {
+        throw configs.payload.alreadyTakenEmail;
+      }
     }
 
     // Create data
@@ -94,28 +142,28 @@ const createUserData = ({ mongo }, configs) =>
   };
 
 const signupUser = ({ mongo, bcrypt }, configs) =>
-  async ({ name, email, password }) => {
+  async (data) => {
     const db = await mongo.MongoClient.connect(configs.database.mongo.uri);
     const col = await db.collection(configs.database.mongo.collections.users);
 
-    // Check if email or name is already taken
+    // Check if available data
 
-    const existingUser = await col.findOne({
+    const availableData = await col.findOne({
       $or: [
-        { name },
-        { email },
+        { name: data.name },
+        { email: data.email },
       ],
     }, {
       name: true,
       email: true,
     });
 
-    if (existingUser) {
-      if (existingUser.name === name) {
+    if (availableData) {
+      if (availableData.name === data.name) {
         throw configs.payload.alreadyTakenName;
       }
 
-      if (existingUser.email === email) {
+      if (availableData.email === data.email) {
         throw configs.payload.alreadyTakenEmail;
       }
     }
@@ -126,9 +174,9 @@ const signupUser = ({ mongo, bcrypt }, configs) =>
 
     const user = {
       new: true,
-      name,
-      email,
-      password: await bcrypt.hash(password, salt),
+      name: data.name,
+      email: data.email,
+      password: await bcrypt.hash(data.password, salt),
     };
 
     const isSuccess = await col.insertOne(user);
