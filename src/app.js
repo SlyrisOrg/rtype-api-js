@@ -30,7 +30,6 @@ import loggerModule from "./modules/logger";
 import databaseModule from "./modules/database";
 import verifierModule from "./modules/verifier";
 import mailerModule from "./modules/mailer";
-import guidModule from "./modules/guid";
 
 // /////////// //
 // MIDDLEWARES //
@@ -38,6 +37,7 @@ import guidModule from "./modules/guid";
 
 import signatureMiddleware from "./middlewares/signature";
 import messengerMiddlware from "./middlewares/messenger";
+import parserErrorCatcher from "./middlewares/parserErrorCatcher";
 
 // /////////// //
 // CONTROLLERS //
@@ -45,53 +45,23 @@ import messengerMiddlware from "./middlewares/messenger";
 
 import userController from "./controllers/user";
 
-// /////// //
-// CONFIGS //
-// /////// //
-
-import serverConfig from "./configs/server";
-import databaseConfig from "./configs/database";
-import messageConfig from "./configs/message";
-
 // ////////////////// //
 // INITIALIZE MODULES //
 // ////////////////// //
 
-const guid = guidModule();
-
 const configs = configsModule({
   dotenv,
-}, {
-  server: serverConfig,
-  database: databaseConfig,
-  message: messageConfig,
 });
 
 const logger = loggerModule({
   winston,
-}, configs);
-
-const database = databaseModule({
-  mongo,
-  bcrypt,
-  jwt,
-}, configs);
-
-const verifier = verifierModule({
-  validator,
-}, configs);
+  configs,
+});
 
 const mailer = mailerModule({
   nodemailer,
-}, configs);
-
-const signature = signatureMiddleware({
-  bcrypt,
-}, configs);
-
-const messenger = messengerMiddlware({
-  guid,
-}, configs);
+  configs,
+});
 
 // /////////// //
 // APPLICATION //
@@ -99,36 +69,62 @@ const messenger = messengerMiddlware({
 
 const app = express();
 
-app.engine("js", messenger);
-
-// /////////////////// //
-// HANDLE PROCESS EXIT //
-// /////////////////// //
-
-process.on("SIGINT", () => {
-  logger.info("Application exit");
-  process.exit(0);
-});
-process.on("SIGTERM", () => {
-  logger.warn("Application interupted");
-  process.exit(0);
-});
-process.on("uncaughtException", (err) => {
-  logger.error("Caught exception:", err);
-  process.exit(1);
-});
-process.on("unhandledRejection", (reason, p) => {
-  logger.error("Unhandled Rejection at:", p, "and reason:", reason);
-  process.exit(1);
-});
-
 try {
+  const database = databaseModule({
+    mongo,
+    bcrypt,
+    jwt,
+    configs,
+  });
+
+  const verifier = verifierModule({
+    validator,
+    configs,
+  });
+
+  const signature = signatureMiddleware({
+    bcrypt,
+    configs,
+  });
+
+  const messenger = messengerMiddlware({
+    configs,
+  });
+
+  // /////////////////// //
+  // HANDLE PROCESS EXIT //
+  // /////////////////// //
+
+  process.on("SIGINT", () => {
+    logger.info("Application exit");
+    process.exit(0);
+  });
+  process.on("SIGTERM", () => {
+    logger.warn("Application interupted");
+    process.exit(0);
+  });
+  process.on("uncaughtException", (err) => {
+    logger.error("Caught exception:", err);
+    process.exit(1);
+  });
+  process.on("unhandledRejection", (reason, p) => {
+    logger.error("Unhandled Rejection at:", p, "and reason:", reason);
+    process.exit(1);
+  });
+
   app.set("views", path.resolve(process.cwd(), "src", "views"));
 
   app.use((req, res, next) => {
     res.set("Content-Type", "application/json");
     next();
   });
+
+  // //////////////////// //
+  // APPLICATION SETTINGS //
+  // //////////////////// //
+
+  app.engine("js", messenger);
+  app.set("view engine", "js");
 
   // /////////////// //
   // SECURITY LAYERS //
@@ -154,13 +150,9 @@ try {
 
   app.use(bodyParser.urlencoded({ extended: true, defer: true }));
   app.use(bodyParser.json({ type: "*/*" }));
-  app.use((error, req, res, next) => {
-    if (error instanceof SyntaxError) {
-      res.render("error", configs.message.badRequest.payload);
-      return;
-    }
-    next();
-  });
+  app.use(parserErrorCatcher({
+    configs,
+  }));
 
   // ///////////// //
   // HELPER LAYERS //
@@ -186,9 +178,10 @@ try {
     jwt,
     database,
     verifier,
-  }, configs)(express.Router()));
+    configs,
+  })(express.Router()));
   app.use("*", (req, res) => {
-    res.render("error", configs.message.notFound.payload);
+    res.render("error", configs.response.notFound.payload);
   });
 
   // /////////////// //

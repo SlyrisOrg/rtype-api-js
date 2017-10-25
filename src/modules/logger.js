@@ -1,4 +1,7 @@
-export default ({ winston }, configs) => {
+export default ({
+  winston,
+  configs,
+}) => {
   winston.cli();
 
   const consoleLogger = new winston.transports.Console({

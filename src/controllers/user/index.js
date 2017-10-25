@@ -1,64 +1,20 @@
-import userSigninController from "./signin";
-import userSignupController from "./signup";
+import userSigninController from "./userSignin";
+import userSignupController from "./userSignup";
+import userFetchController from "./userFetch";
+import userUpdateController from "./userUpdate";
+import userCreateController from "./userCreate";
 
-export const userFetchController = ({ database }) => (
-  async (req, res, next) => {
-    try {
-      const data = await database.getUserData(req.user);
-
-      res.success({
-        content: data,
-      });
-    } catch (err) {
-      res.render("error", err);
-    }
-  }
-);
-
-export const userUpdateController = ({ database, verifier }) => (
-  async (req, res, next) => {
-    const errors = verifier(req.body);
-
-    if (errors.length) {
-      throw errors[0];
-    }
-
-    try {
-      await database.updateUserData(req.user, req.body);
-
-      res.success();
-    } catch (err) {
-      res.render("error", err);
-    }
-  }
-);
-
-export const userCreateController = ({ verifier, database }) => (
-  async (req, res, next) => {
-    const errors = verifier(req.body);
-
-    if (errors.length) {
-      throw errors[0];
-    }
-
-    try {
-      await database.createUserData(req.user, req.body);
-
-      res.success();
-    } catch (err) {
-      res.render("error", err);
-    }
-  }
-);
-
-const verifyTokenMiddleware = ({ jwt }, configs) => (
+const verifyTokenMiddleware = ({
+  jwt,
+  configs,
+}) => (
   async (req, res, next) => {
     try {
       const token = req.get("Authorization").substring(4);
       const data = await jwt.verify(token, configs.server.secret);
 
       if (!data || !data._id) {
-        throw configs.message.unvalidToken.payload;
+        throw configs.response.unvalidToken.payload;
       }
 
       req.user = data._id;
@@ -69,34 +25,34 @@ const verifyTokenMiddleware = ({ jwt }, configs) => (
   }
 );
 
-export default (deps, configs) => (
+export default deps => (
   (router) => {
     router.get(
       "/",
-      verifyTokenMiddleware(deps, configs),
-      userFetchController(deps, configs),
+      verifyTokenMiddleware(deps),
+      userFetchController(deps),
     );
 
     router.put(
       "/",
-      verifyTokenMiddleware(deps, configs),
-      userUpdateController(deps, configs),
+      verifyTokenMiddleware(deps),
+      userUpdateController(deps),
     );
 
     router.post(
       "/",
-      verifyTokenMiddleware(deps, configs),
-      userCreateController(deps, configs),
+      verifyTokenMiddleware(deps),
+      userCreateController(deps),
     );
 
     router.post(
       "/signin",
-      userSigninController(deps, configs),
+      userSigninController(deps),
     );
 
     router.post(
       "/signup",
-      userSignupController(deps, configs),
+      userSignupController(deps),
     );
 
     return router;

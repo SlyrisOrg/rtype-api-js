@@ -1,4 +1,7 @@
-export default ({ bcrypt }, configs) => (
+export default ({
+  bcrypt,
+  configs,
+}) => (
   async (req, res, next) => {
     const signature = req.headers["x-hub-signature"];
 
@@ -13,6 +16,6 @@ export default ({ bcrypt }, configs) => (
       }
     }
 
-    res.render("error", configs.message.unvalidSignature.payload);
+    res.render("error", configs.response.unvalidSignature.payload);
   }
 );

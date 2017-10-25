@@ -1,5 +1,9 @@
-export default ({ nodemailer, logger }, configs) => ({
-  alert: async (error) => {
+export default ({
+  nodemailer,
+  configs,
+  logger,
+}) => (
+  async (error) => {
     const now = new Date();
 
     const smtpTransport = nodemailer.createTransport("SMTP", {
@@ -19,5 +23,5 @@ export default ({ nodemailer, logger }, configs) => ({
     } catch (err) {
       logger.error(err);
     }
-  },
-});
+  }
+);

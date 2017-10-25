@@ -28,17 +28,17 @@ export default () => ({
     payload: 1101,
     message: "Username or email is missing",
   },
-  emptyPseudo: {
+  emptyNickname: {
     payload: 201,
-    message: "Empty pseudo",
+    message: "Empty nickname",
   },
-  badFormatPseudo: {
+  badFormatNickname: {
     payload: 202,
-    message: "Bad pseudo format",
+    message: "Bad nickname format",
   },
-  alreadyTakenPseudo: {
+  alreadyTakenNickname: {
     payload: 203,
-    message: "This pseudo already exist in current database state",
+    message: "This nickname already exist in current database state",
   },
   emptyName: {
     payload: 301,

@@ -1,7 +1,11 @@
-export default ({ verifier, database }) => (
-  async (req, res, next) => {
+export default ({
+  verifier,
+  database,
+  logger,
+}) => (
+  async (req, res) => {
     try {
-      const body = await verifier({
+      const body = await verifier.user({
         name: req.body.name,
         password: req.body.password,
         email: req.body.email,
@@ -9,8 +13,9 @@ export default ({ verifier, database }) => (
 
       await database.signupUser(body);
 
-      res.success();
+      res.render("success");
     } catch (err) {
+      logger.error("Signup controller", err);
       res.render("error", err);
     }
   }
