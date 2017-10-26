@@ -31,25 +31,18 @@ import databaseModule from "./modules/database";
 import verifierModule from "./modules/verifier";
 import mailerModule from "./modules/mailer";
 
-// /////////// //
-// MIDDLEWARES //
-// /////////// //
-
-import apiHeaderMiddleware from "./middlewares/apiHeader";
-import debugLoggerMiddleware from "./middlewares/debugLogger";
-import signatureMiddleware from "./middlewares/signature";
-import messengerMiddlware from "./middlewares/messenger";
-import parserErrorCatcherMiddlware from "./middlewares/parserErrorCatcher";
+import messengerEngine from "./engines/messenger";
 
 // /////////// //
-// CONTROLLERS //
+// APP MODULES //
 // /////////// //
 
-import userController from "./controllers/user";
+import middlewares from "./middlewares";
+import controllers from "./controllers";
 
-// ////////////////// //
-// INITIALIZE MODULES //
-// ////////////////// //
+// //////////////// //
+// INITIALE MODULES //
+// //////////////// //
 
 const configs = configsModule({
   dotenv,
@@ -65,6 +58,27 @@ const mailer = mailerModule({
   configs,
 });
 
+// ///////////////////// //
+// HANDLE PROCESS SIGNAL //
+// ///////////////////// //
+
+process.on("SIGINT", () => {
+  logger.info("Application exit");
+  process.exit(0);
+});
+process.on("SIGTERM", () => {
+  logger.warn("Application interupted");
+  process.exit(0);
+});
+process.on("uncaughtException", (err) => {
+  logger.error("Caught exception:", err);
+  process.exit(1);
+});
+process.on("unhandledRejection", (reason, p) => {
+  logger.error("Unhandled Rejection at:", p, "and reason:", reason);
+  process.exit(1);
+});
+
 // /////////// //
 // APPLICATION //
 // /////////// //
@@ -72,6 +86,20 @@ const mailer = mailerModule({
 const app = express();
 
 try {
+  // /////// //
+  // ENGINES //
+  // /////// //
+
+  app.engine("js", messengerEngine({
+    configs,
+  }));
+  app.set("view engine", "js");
+  app.set("views", path.resolve(process.cwd(), "src", "views"));
+
+  // ///////////////// //
+  // SECONDARY MODULES //
+  // ///////////////// //
+
   const database = databaseModule({
     mongo,
     bcrypt,
@@ -84,108 +112,29 @@ try {
     configs,
   });
 
-  const signature = signatureMiddleware({
-    bcrypt,
-    configs,
-  });
+  // //////////////// //
+  // APPLICATION CORE //
+  // //////////////// //
 
-  const messenger = messengerMiddlware({
+  app.use(middlewares({
     configs,
-  });
-
-  const debugLogger = debugLoggerMiddleware({
     logger,
-  });
+    bcrypt,
+    helmet,
+    bodyParser,
+    morgan,
+    path,
+    express,
+  }, express.Router()));
 
-  const parserErrorCatcher = parserErrorCatcherMiddlware({
-    configs,
-  });
-
-  const apiHeader = apiHeaderMiddleware();
-
-  // /////////////////// //
-  // HANDLE PROCESS EXIT //
-  // /////////////////// //
-
-  process.on("SIGINT", () => {
-    logger.info("Application exit");
-    process.exit(0);
-  });
-  process.on("SIGTERM", () => {
-    logger.warn("Application interupted");
-    process.exit(0);
-  });
-  process.on("uncaughtException", (err) => {
-    logger.error("Caught exception:", err);
-    process.exit(1);
-  });
-  process.on("unhandledRejection", (reason, p) => {
-    logger.error("Unhandled Rejection at:", p, "and reason:", reason);
-    process.exit(1);
-  });
-
-
-  // //////////////////// //
-  // APPLICATION SETTINGS //
-  // //////////////////// //
-
-  app.engine("js", messenger);
-  app.set("view engine", "js");
-  app.set("views", path.resolve(process.cwd(), "src", "views"));
-
-  // /////////////// //
-  // SECURITY LAYERS //
-  // /////////////// //
-
-  app.use(helmet());
-  app.use(helmet.hpkp({
-    maxAge: 7776000,
-    sha256s: ["AbCdEf123=", "ZyXwVu456="],
-  }));
-  app.use(helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'"],
-    },
-  }));
-  app.use(helmet.noCache());
-  app.use(signature);
-
-  // ///////////// //
-  // PARSER LAYERS //
-  // ///////////// //
-
-  app.use(apiHeader());
-  app.use(bodyParser.urlencoded({ extended: true, defer: true }));
-  app.use(bodyParser.json({ type: "*/*" }));
-  app.use(parserErrorCatcher());
-
-  // ///////////// //
-  // HELPER LAYERS //
-  // ///////////// //
-
-  app.use(morgan("combined", {
-    stream: {
-      write: message => logger.info(message),
-    },
-  }));
-  app.use(debugLogger());
-
-  // /////////////////// //
-  // CONTROLLER ENDPOINT //
-  // /////////////////// //
-
-  app.use("/", express.static(path.resolve(process.cwd(), "public")));
-  app.use("/api/user", userController({
+  app.use(controllers({
     logger,
     jwt,
     database,
     verifier,
     configs,
-  })(express.Router()));
-  app.use("*", (req, res) => {
-    res.render("error", configs.response.notFound.payload);
-  });
+    express,
+  }, express.Router()));
 
   // /////////////// //
   // SERVER INSTANCE //
