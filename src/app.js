@@ -30,8 +30,7 @@ import loggerModule from "./modules/logger";
 import databaseModule from "./modules/database";
 import verifierModule from "./modules/verifier";
 import mailerModule from "./modules/mailer";
-
-import messengerEngine from "./engines/messenger";
+import messengerEngine from "./modules/messenger";
 
 // /////////// //
 // APP MODULES //
