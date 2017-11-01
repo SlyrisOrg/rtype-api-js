@@ -1,0 +1,1 @@
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0});exports.default=({verifier,database,logger})=>async(req,res)=>{try{const body=await verifier.user({name:req.body.name,password:req.body.password,email:req.body.email});await database.signupUser(body);res.render("success")}catch(err){logger.error("Signup controller",err);res.render("error",err)}};

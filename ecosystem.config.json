@@ -2,7 +2,7 @@
   "apps": [
     {
       "name": "RType-API",
-      "script": "./src/dist.js",
+      "script": "./dist/app.js",
       "watch": true,
       "env": {
         "NODE_ENV": "development",

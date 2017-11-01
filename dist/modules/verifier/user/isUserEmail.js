@@ -1,0 +1,1 @@
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0});exports.default=({validator,configs})=>async email=>{if(!email||validator.isEmpty(email)){throw configs.response.emptyEmail}if(!validator.isEmail(email)){throw configs.response.badFormatEmail}return email};

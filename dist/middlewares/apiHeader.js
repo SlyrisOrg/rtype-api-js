@@ -1,0 +1,1 @@
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0});exports.default=()=>async(req,res,next)=>{res.set("Content-Type","application/json");next()};

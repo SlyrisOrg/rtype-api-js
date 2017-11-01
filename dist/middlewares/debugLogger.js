@@ -1,0 +1,1 @@
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0});exports.default=({logger})=>async(req,res,next)=>{logger.debug(req.body);next()};

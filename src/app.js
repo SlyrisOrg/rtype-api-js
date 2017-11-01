@@ -43,9 +43,9 @@ import controllers from "./controllers";
 // INITIALE MODULES //
 // //////////////// //
 
-const configs = configsModule({
-  dotenv,
-});
+dotenv.config();
+
+const configs = configsModule();
 
 const logger = loggerModule({
   winston,
