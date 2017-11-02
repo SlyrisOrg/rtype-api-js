@@ -11,14 +11,13 @@ const guid = () => (
 export default ({
   configs,
 }) => (
-  async (filePath, message, callback) => {
+  async (filePath, options, callback) => {
     try {
-      console.log(filePath)
       const file = await import(filePath);
 
       const id = guid();
 
-      const populated = file.default(id, configs.response, message);
+      const populated = file.default(id, configs.response, options);
       const rendered = JSON.stringify(populated);
       return callback(null, rendered);
     } catch (err) {

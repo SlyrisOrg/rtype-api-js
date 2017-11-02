@@ -21,7 +21,7 @@ export default ({
   })(express.Router()));
 
   router.use("*", (req, res) => {
-    res.render("error", configs.response.notFound.payload);
+    res.render("error", configs.response.notFound);
   });
 
   return router;

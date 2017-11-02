@@ -148,7 +148,7 @@ try {
       throw new Error(err);
     }
 
-    const bind = typeof configs.server.port === "string"
+    const bind = configs.server.port instanceof String
       ? `Pipe ${configs.server.port}`
       : `Port ${configs.server.port}`;
 
@@ -163,7 +163,7 @@ try {
   });
   server.on("listening", () => {
     const addr = server.address();
-    const bind = typeof addr === "string"
+    const bind = addr instanceof String
       ? `pipe ${addr}`
       : `port ${addr.port}`;
     logger.info("Application listening on", bind);

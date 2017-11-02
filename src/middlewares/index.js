@@ -13,9 +13,7 @@ export default ({
   path,
   express,
 }, router) => {
-  // /////////////// //
-  // SECURITY LAYERS //
-  // /////////////// //
+  router.use(apiHeaderMiddleware());
 
   router.use(helmet());
   router.use(helmet.hpkp({
@@ -34,20 +32,11 @@ export default ({
     configs,
   }));
 
-  // ///////////// //
-  // PARSER LAYERS //
-  // ///////////// //
-
-  router.use(apiHeaderMiddleware());
   router.use(bodyParser.urlencoded({ extended: true, defer: true }));
   router.use(bodyParser.json({ type: "*/*" }));
   router.use(parserErrorCatcherMiddlware({
     configs,
   }));
-
-  // ///////////// //
-  // HELPER LAYERS //
-  // ///////////// //
 
   router.use(morgan("combined", {
     stream: {

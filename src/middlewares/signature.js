@@ -16,6 +16,6 @@ export default ({
       }
     }
 
-    res.render("error", configs.response.unvalidSignature.payload);
+    res.render("error", configs.response.unvalidSignature);
   }
 );
