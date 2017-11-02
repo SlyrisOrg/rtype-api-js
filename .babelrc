@@ -38,5 +38,6 @@
     "node_modules"
   ],
   "comments": false,
-  "minified": true
+  "minified": true,
+  "sourceMaps": true
 }

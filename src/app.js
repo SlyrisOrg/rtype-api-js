@@ -93,7 +93,7 @@ try {
     configs,
   }));
   app.set("view engine", "js");
-  app.set("views", path.resolve(process.cwd(), "src", "views"));
+  app.set("views", path.resolve(__dirname, "views"));
 
   // ///////////////// //
   // SECONDARY MODULES //

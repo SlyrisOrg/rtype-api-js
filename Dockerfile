@@ -1,9 +1,10 @@
-FROM node:alpine
+FROM node
+
 # Create app directory
 WORKDIR /usr/src/app
 
 # Install pm2 remote control
-RUN npm install pm2 -g
+RUN yarn global add pm2
 
 # Install app dependencies
 COPY package.json .
@@ -15,5 +16,7 @@ RUN yarn
 # Bundle app source
 COPY . .
 
-EXPOSE 443
-CMD [ "yarn", "start" ]
+RUN yarn build
+
+EXPOSE 8585
+CMD [ "pm2-docker", "ecosystem.config.json" ]
