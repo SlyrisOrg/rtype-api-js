@@ -1,6 +1,7 @@
 import userSigninController from "./userSignin";
 import userSignupController from "./userSignup";
-import userFetchController from "./userFetch";
+import userReadController from "./userRead";
+import userDeleteController from "./userDelete";
 import userUpdateController from "./userUpdate";
 import userCreateController from "./userCreate";
 
@@ -30,7 +31,7 @@ export default deps => (
     router.get(
       "/",
       verifyTokenMiddleware(deps),
-      userFetchController(deps),
+      userReadController(deps),
     );
 
     router.put(
@@ -43,6 +44,12 @@ export default deps => (
       "/",
       verifyTokenMiddleware(deps),
       userCreateController(deps),
+    );
+
+    router.post(
+      "/",
+      verifyTokenMiddleware(deps),
+      userDeleteController(deps),
     );
 
     router.post(

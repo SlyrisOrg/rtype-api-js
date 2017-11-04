@@ -23,7 +23,6 @@ export default () => ({
     payload: 105,
     message: "Bad JSON format",
   },
-
   emptyCredential: {
     payload: 1101,
     message: "Username or email is missing",
@@ -73,7 +72,7 @@ export default () => ({
     message: "Bad password format",
   },
 
-  getUserData: {
+  readUserData: {
     payload: 601,
     message: "Fail to fetch user data",
   },

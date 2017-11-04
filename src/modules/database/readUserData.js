@@ -12,7 +12,7 @@ export default ({
     });
 
     if (!user) {
-      throw configs.response.getUserData;
+      throw configs.response.readUserData;
     }
 
     return user;

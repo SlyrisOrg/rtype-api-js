@@ -1,1 +1,0 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});exports.default=({database})=>async(req,res)=>{try{const data=await database.getUserData(req.user);res.render("success",{content:data})}catch(err){res.render("error",err)}};

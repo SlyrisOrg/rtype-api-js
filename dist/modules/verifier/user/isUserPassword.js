@@ -1,1 +1,0 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});exports.default=({validator,configs})=>async password=>{if(!password||validator.isEmpty(password)){throw configs.response.emptyPassword}if(!validator.isLength(password,{min:3,max:20})){throw configs.response.badFormatPassword}return password};

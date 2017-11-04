@@ -1,1 +1,0 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});exports.default=({mongo,configs},client)=>async id=>{const db=await client;const col=await db.collection(configs.database.mongo.collections.users);const user=await col.findOne({_id:mongo.ObjectId(id)},{password:!1});if(!user){throw configs.response.getUserData}return user};

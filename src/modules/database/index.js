@@ -1,5 +1,6 @@
 import updateUserData from "./updateUserData";
-import getUserData from "./getUserData";
+import readUserData from "./readUserData";
+import deleteUserData from "./deleteUserData";
 import createUserData from "./createUserData";
 import signupUser from "./signupUser";
 import signinUser from "./signinUser";
@@ -15,7 +16,8 @@ export default (deps) => {
   const client = getClient(deps);
 
   return {
-    getUserData: getUserData(deps, client),
+    deleteUserData: deleteUserData(deps, client),
+    readUserData: readUserData(deps, client),
     updateUserData: updateUserData(deps, client),
     createUserData: createUserData(deps, client),
     signupUser: signupUser(deps, client),
