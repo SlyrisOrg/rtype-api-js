@@ -31,7 +31,7 @@ export default ({
         },
       });
     } catch (err) {
-      logger.error("Signup controller", err);
+      logger.error("Signin controller", err);
       res.render("error", err);
     }
   }
