@@ -8,6 +8,7 @@ export default ({
       await database.createUserData(req.user, req.body);
       res.render("success");
     } catch (err) {
+      logger.error("User create controller", err);
       res.render("error", err);
     }
   }
