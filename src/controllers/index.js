@@ -8,10 +8,6 @@ export default ({
   configs,
   express,
 }, router) => {
-  // /////////////////// //
-  // CONTROLLER ENDPOINT //
-  // /////////////////// //
-
   router.use("/api/user", userController({
     logger,
     jwt,
