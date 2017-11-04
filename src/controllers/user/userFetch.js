@@ -9,6 +9,7 @@ export default ({
         content: data,
       });
     } catch (err) {
+      logger.error("User fetch controller", err);
       res.render("error", err);
     }
   }
