@@ -36,6 +36,7 @@
 ```json
 {
   "id": String,
+  "success": Boolean,
   "payload": Number,
   "message": String,
   "content": Object,
@@ -57,8 +58,9 @@
   <a name="user--connection_signup"></a><a name="1.1"></a>
   - [1.1](#user--connection_signup) **Signup**: Register a new user
 
-  name: between 1 and 25 characters
-  email: between 3 and 20 characters
+  name: between 1 and 25 characters.
+
+  email: between 3 and 20 characters.
 
   Request:
    ```json
@@ -73,6 +75,7 @@
    ```json
    {
      "id": String,
+     "success": Boolean,
      "payload": Number,
      "message": String,
      "content": Object,
@@ -87,8 +90,9 @@
   <a name="user--connection_signin"></a><a name="1.2"></a>
   - [1.1](#user--connection_signin) **Signin**: Sigin user and get a 48 hours valid token
 
-  name: between 1 and 25 characters
-  email: between 3 and 20 characters
+  name: between 1 and 25 characters.
+
+  email: between 3 and 20 characters.
 
   Request:
    ```json
@@ -103,6 +107,7 @@
    ```json
    {
      "id": String,
+     "success": Boolean,
      "payload": Number,
      "message": String,
      "content": {
@@ -119,7 +124,7 @@
   <a name="user--crud_create"></a><a name="1.3"></a>
   - [1.1](#user--crud_create) **Create**: Implement new fresh data to a new registered user
 
-  nickname: between 1 and 25 characters
+  nickname: between 1 and 25 characters.
 
   Request:
    ```json
@@ -136,6 +141,7 @@
    ```json
    {
      "id": String,
+     "success": Boolean,
      "payload": Number,
      "message": String,
      "content": Object,
@@ -150,7 +156,7 @@
   <a name="user--crud_update"></a><a name="1.4"></a>
   - [1.1](#user--crud_update) **Update**: Update current data of a user
 
-  nickname: between 1 and 25 characters
+  nickname: between 1 and 25 characters.
 
   Request:
    ```json
@@ -167,6 +173,7 @@
    ```json
    {
      "id": String,
+     "success": Boolean,
      "payload": Number,
      "message": String,
      "content": Object,
@@ -193,6 +200,7 @@
    ```json
    {
      "id": String,
+     "success": Boolean,
      "payload": Number,
      "message": String,
      "content": {
@@ -229,6 +237,7 @@
    ```json
    {
      "id": String,
+     "success": Boolean,
      "payload": Number,
      "message": String,
      "content": Object,
