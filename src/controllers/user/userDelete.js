@@ -1,5 +1,6 @@
 export default ({
   database,
+  logger,
 }) => (
   async (req, res) => {
     try {

@@ -11,8 +11,6 @@ export default ({
         { name: data.name },
         { email: data.email },
       ],
-    }, {
-      password: true,
     });
 
     if (!user) {
@@ -33,6 +31,9 @@ export default ({
       expiresIn: 48 * 60 * 60,
     });
 
-    return token;
+    return {
+      ...user,
+      token,
+    };
   }
 );

@@ -23,12 +23,10 @@ export default ({
       }
 
       const body = await verifier.user(pre);
-      const token = await database.signinUser(body);
+      const user = await database.signinUser(body);
 
       res.render("success", {
-        content: {
-          token,
-        },
+        content: user,
       });
     } catch (err) {
       logger.error("Signin controller", err);

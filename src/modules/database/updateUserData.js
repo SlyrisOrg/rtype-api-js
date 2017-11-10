@@ -2,7 +2,9 @@ export default ({
   configs,
   mongo,
 }, client) => (
-  async (id, data) => {
+  async (id, {
+    nickname, name, email, profile,
+  }) => {
     const db = await client;
     const col = await db.collection(configs.database.mongo.collections.users);
     const user = await col.findOne({
@@ -15,9 +17,9 @@ export default ({
 
     const availableData = await col.findOne({
       $or: [
-        { nickname: data.nickname },
-        { name: data.name },
-        { email: data.email },
+        { nickname },
+        { name },
+        { email },
       ],
     }, {
       nickname: true,
@@ -26,15 +28,15 @@ export default ({
     });
 
     if (availableData) {
-      if (availableData.nickname === data.nickname) {
+      if (availableData.nickname === nickname) {
         throw configs.response.alreadyTakenNickname;
       }
 
-      if (availableData.name === data.name) {
+      if (availableData.name === name) {
         throw configs.response.alreadyTakenName;
       }
 
-      if (availableData.email === data.email) {
+      if (availableData.email === email) {
         throw configs.response.alreadyTakenEmail;
       }
     }
@@ -43,7 +45,12 @@ export default ({
 
     const newUserData = {
       ...user,
-      ...data,
+      profile: {
+        level: profile.level,
+        faction: profile.faction,
+        experience: profile.experience,
+        idIcon: profile.idIcon,
+      },
     };
 
     await col.findOneAndUpdate({

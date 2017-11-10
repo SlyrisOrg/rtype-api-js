@@ -1,6 +1,7 @@
 export default ({
   verifier,
   database,
+  logger,
 }) => (
   async (req, res) => {
     try {

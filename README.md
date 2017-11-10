@@ -2,7 +2,7 @@
 
 *Still in development*
 
-> **Note**: this guide assumes you are conscious of what you are doing due of the liberty offer by the API.
+> **Note**: "this" guide assumes you are conscious of what you are doing due of the liberty offer by the API.
 
 ## Introduction
 
@@ -10,15 +10,15 @@
 
 ```json
 {
-  "_id": ObjectId,
-  "new": Boolean,
-  "name": String,
-  "email": String,
-  "password": String,
+  "_id": "ObjectId",
+  "new": "Boolean",
+  "name": "String",
+  "email": "String",
+  "password": "String",
 
   "profile": {
-    "level": Number,
-    "gold": Number
+    "level": "Number",
+    "gold": "Number"
   }
 }
 ```
@@ -26,21 +26,21 @@
 ### Request Headers
 
 ```
-  Content-Type: "application/json"
-  Authorization: "jwt ${token}"
-  X-Hub-Signature: String
+  Content-"Type": "application/json"
+  "Authorization": "jwt ${token}"
+  X-Hub-"Signature": "String"
 ```
 
 ### Data Response
 
 ```json
 {
-  "id": String,
-  "success": Boolean,
-  "payload": Number,
-  "message": String,
-  "content": Object,
-  "timestamp": Date
+  "id": "String",
+  "success": "Boolean",
+  "payload": "Number",
+  "message": "String",
+  "content": "Object",
+  "timestamp": "Date"
 }
 ```
 
@@ -48,98 +48,98 @@
 
 ```json
 {
-  success: {
-    payload: 0,
-    message: "Requrest success",
+  "success": {
+    "payload": "0",
+    "message": "Requrest success",
   },
-  notFound: {
-    payload: 101,
-    message: "No entrypoint here",
+  "notFound": {
+    "payload": "101",
+    "message": "No entrypoint here",
   },
-  internalError: {
-    payload: 102,
-    message: "Unexpected internal error",
+  "internalError": {
+    "payload": "102",
+    "message": "Unexpected internal error",
   },
-  unvalidSignature: {
-    payload: 103,
-    message: "Unvalid signature",
+  "unvalidSignature": {
+    "payload": "103",
+    "message": "Unvalid signature",
   },
-  unvalidToken: {
-    payload: 104,
-    message: "Unvalid token",
+  "unvalidToken": {
+    "payload": "104",
+    "message": "Unvalid token",
   },
-  badRequest: {
-    payload: 105,
-    message: "Bad JSON format",
+  "badRequest": {
+    "payload": "105",
+    "message": "Bad JSON format",
   },
-  emptyCredential: {
-    payload: 1101,
-    message: "Username or email is missing",
+  "emptyCredential": {
+    "payload": "1101",
+    "message": "Username or email is missing",
   },
-  emptyNickname: {
-    payload: 201,
-    message: "Empty nickname",
+  "emptyNickname": {
+    "payload": "201",
+    "message": "Empty nickname",
   },
-  badFormatNickname: {
-    payload: 202,
-    message: "Bad nickname format",
+  "badFormatNickname": {
+    "payload": "202",
+    "message": "Bad nickname format",
   },
-  alreadyTakenNickname: {
-    payload: 203,
-    message: "This nickname already exist in current database state",
+  "alreadyTakenNickname": {
+    "payload": "203",
+    "message": "This nickname already exist in current database state",
   },
-  emptyName: {
-    payload: 301,
-    message: "Empty name",
+  "emptyName": {
+    "payload": "301",
+    "message": "Empty name",
   },
-  badFormatName: {
-    payload: 302,
-    message: "Bad name format",
+  "badFormatName": {
+    "payload": "302",
+    "message": "Bad name format",
   },
-  alreadyTakenName: {
-    payload: 303,
-    message: "This username already exist in current database state",
+  "alreadyTakenName": {
+    "payload": "303",
+    "message": "This username already exist in current database state",
   },
-  emptyEmail: {
-    payload: 401,
-    message: "Empty email",
+  "emptyEmail": {
+    "payload": "401",
+    "message": "Empty email",
   },
-  badFormatEmail: {
-    payload: 402,
-    message: "Bad email format",
+  "badFormatEmail": {
+    "payload": "402",
+    "message": "Bad email format",
   },
-  alreadyTakenEmail: {
-    payload: 403,
-    message: "This email already exist in current database state",
+  "alreadyTakenEmail": {
+    "payload": "403",
+    "message": "This email already exist in current database state",
   },
-  emptyPassword: {
-    payload: 501,
-    message: "Empty password",
+  "emptyPassword": {
+    "payload": "501",
+    "message": "Empty password",
   },
-  badFormatPassword: {
-    payload: 502,
-    message: "Bad password format",
+  "badFormatPassword": {
+    "payload": "502",
+    "message": "Bad password format",
   },
 
-  readUserData: {
-    payload: 601,
-    message: "Fail to fetch user data",
+  "readUserData": {
+    "payload": "601",
+    "message": "Fail to fetch user data",
   },
-  putUserData: {
-    payload: 701,
-    message: "Fail to update data",
+  "putUserData": {
+    "payload": "701",
+    "message": "Fail to update data",
   },
-  postUserData: {
-    payload: 801,
-    message: "Fail to create player",
+  "postUserData": {
+    "payload": "801",
+    "message": "Fail to create player",
   },
-  signinUser: {
-    payload: 901,
-    message: "Couldn't signin",
+  "signinUser": {
+    "payload": "901",
+    "message": "Couldn't signin",
   },
-  signupUser: {
-    payload: 1001,
-    message: "Couldn't signup",
+  "signupUser": {
+    "payload": "1001",
+    "message": "Couldn't signup",
   },
 }
 ```
@@ -156,30 +156,30 @@
 ## User Signup
 
   <a name="user--connection_signup"></a><a name="1.1"></a>
-  - [1.1](#user--connection_signup) **Signup**: Register a new user
+  - [1.1](#user--connection_signup) **Signup**: "Register" a new user
 
-  name: between 1 and 25 characters.
+  "name": "between" 1 and 25 characters.
 
-  email: between 3 and 20 characters.
+  "email": "between" 3 and 20 characters.
 
-  Request:
+  "Request":
    ```json
    {
-     "name": String,
-     "email": String,
-     "password": String
+     "name": "String",
+     "email": "String",
+     "password": "String"
    }
    ```
 
-   Response:
+   "Response":
    ```json
    {
-     "id": String,
-     "success": Boolean,
-     "payload": Number,
-     "message": String,
-     "content": Object,
-     "timestamp": Date
+     "id": "String",
+     "success": "Boolean",
+     "payload": "Number",
+     "message": "String",
+     "content": "Object",
+     "timestamp": "Date"
    }
    ```
 
@@ -188,32 +188,42 @@
 ## User Signup
 
   <a name="user--connection_signin"></a><a name="1.2"></a>
-  - [1.1](#user--connection_signin) **Signin**: Sigin user and get a 48 hours valid token
+  - [1.1](#user--connection_signin) **Signin**: "Sigin" user and get a 48 hours valid token
 
-  name: between 1 and 25 characters.
+  "name": "between" 1 and 25 characters.
 
-  email: between 3 and 20 characters.
+  "email": "between" 3 and 20 characters.
 
-  Request:
+  "Request":
    ```json
    {
-     "name": String?,
-     "email": String?,
-     "password": String
+     "name": "String"?,
+     "email": "String"?,
+     "password": "String"
    }
    ```
 
-   Response:
+   "Response":
    ```json
    {
-     "id": String,
-     "success": Boolean,
-     "payload": Number,
-     "message": String,
+     "id": "String",
+     "success": "Boolean",
+     "payload": "Number",
+     "message": "String",
      "content": {
-       "token": String
+       "_id": "ObjectId",
+       "name": "String",
+       "email": "String",
+       "nickname": "String",
+        "profile": {
+          "icon": "Number",
+          "level": "Number",
+          "experience": "Number",
+          "faction": "Number",
+        },
+       "token": "String"
      },
-     "timestamp": Date
+     "timestamp": "Date"
    }
    ```
 
@@ -222,30 +232,30 @@
 ## User Create
 
   <a name="user--crud_create"></a><a name="1.3"></a>
-  - [1.1](#user--crud_create) **Create**: Implement new fresh data to a new registered user
+  - [1.1](#user--crud_create) **Create**: "Implement" new fresh data to a new registered user
 
-  nickname: between 1 and 25 characters.
+  "nickname": "between" 1 and 25 characters.
 
-  Request:
+  "Request":
    ```json
    {
-     "nickname": String
+     "nickname": "String"
    }
    ```
 
-  > **Flag**: token needed.
+  > **Flag**: "token" needed.
 
-  > **Note**: this data structure is a model of how to do, the api give access to all user field be carefull to do not override any field without reason.
+  > **Note**: "this" data structure is a model of how to do, the api give access to all user field be carefull to do not override any field without reason.
 
-   Response:
+   "Response":
    ```json
    {
-     "id": String,
-     "success": Boolean,
-     "payload": Number,
-     "message": String,
-     "content": Object,
-     "timestamp": Date
+     "id": "String",
+     "success": "Boolean",
+     "payload": "Number",
+     "message": "String",
+     "content": "Object",
+     "timestamp": "Date"
    }
    ```
 
@@ -254,30 +264,30 @@
 ## User Update
 
   <a name="user--crud_update"></a><a name="1.4"></a>
-  - [1.1](#user--crud_update) **Update**: Update current data of a user
+  - [1.1](#user--crud_update) **Update**: "Update" current data of a user
 
-  nickname: between 1 and 25 characters.
+  "nickname": "between" 1 and 25 characters.
 
-  Request:
+  "Request":
    ```json
    {
-     "nickname": String
+     "nickname": "String"
    }
    ```
 
-  > **Flag**: token needed.
+  > **Flag**: "token" needed.
 
-  > **Note**: this data structure is a model of how to do, the api give access to all user field be carefull to do not override any field without reason.
+  > **Note**: "this" data structure is a model of how to do, the api give access to all user field be carefull to do not override any field without reason.
 
-   Response:
+   "Response":
    ```json
    {
-     "id": String,
-     "success": Boolean,
-     "payload": Number,
-     "message": String,
-     "content": Object,
-     "timestamp": Date
+     "id": "String",
+     "success": "Boolean",
+     "payload": "Number",
+     "message": "String",
+     "content": "Object",
+     "timestamp": "Date"
    }
    ```
 
@@ -286,35 +296,36 @@
 ## User Read
 
   <a name="user--crud_read"></a><a name="1.5"></a>
-  - [1.1](#user--crud_read) **Read**: Get current data of a user
+  - [1.1](#user--crud_read) **Read**: "Get" current data of a user
 
-  Request:
+  "Request":
    ```json
    {
    }
    ```
 
-  > **Flag**: token needed.
+  > **Flag**: "token" needed.
 
-   Response:
+   "Response":
    ```json
    {
-     "id": String,
-     "success": Boolean,
-     "payload": Number,
-     "message": String,
+     "id": "String",
+     "success": "Boolean",
+     "payload": "Number",
+     "message": "String",
      "content": {
-       "_id": ObjectId,
-       "name": String,
-       "email": String,
-       "nickname": String,
-       "profile": {
-         "level": Number,
-         "gold": Number,
-         "ship": Object
-       }
+       "_id": "ObjectId",
+       "name": "String",
+       "email": "String",
+       "nickname": "String",
+        "profile": {
+          "icon": "Number",
+          "level": "Number",
+          "experience": "Number",
+          "faction": "Number",
+        },
      },
-     "timestamp": Date
+     "timestamp": "Date"
    }
    ```
 
@@ -323,25 +334,25 @@
 ## User Read
 
   <a name="user--crud_delete"></a><a name="1.6"></a>
-  - [1.1](#user--crud_delete) **Delete**: Delete user
+  - [1.1](#user--crud_delete) **Delete**: "Delete" user
 
-  Request:
+  "Request":
    ```json
    {
    }
    ```
 
-  > **Flag**: token needed.
+  > **Flag**: "token" needed.
 
-   Response:
+   "Response":
    ```json
    {
-     "id": String,
-     "success": Boolean,
-     "payload": Number,
-     "message": String,
-     "content": Object,
-     "timestamp": Date
+     "id": "String",
+     "success": "Boolean",
+     "payload": "Number",
+     "message": "String",
+     "content": "Object",
+     "timestamp": "Date"
    }
    ```
 
