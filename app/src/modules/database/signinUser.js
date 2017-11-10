@@ -11,6 +11,8 @@ export default ({
         { name: data.name },
         { email: data.email },
       ],
+    }, {
+      password: false
     });
 
     if (!user) {

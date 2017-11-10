@@ -1,6 +1,0 @@
-# humanstxt.org/
-# The humans responsible & technology colophon
-
-# TEAM
-
-    P. "Shikanime" William <shikalegend@gmail.com> -- Backend Developer -- @shikalegend

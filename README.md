@@ -2,7 +2,9 @@
 
 *Still in development*
 
-> **Note**: "this" guide assumes you are conscious of what you are doing due of the liberty offer by the API.
+> **Note**: this guide assumes you are conscious of what you are doing due of the liberty offer by the API.
+> **Default auth key**: eAVZepqfXsrSW6LVjTuqb3W3CHsf9mAUa5776cGZ2hLGzztK4PAT5gkJE52h
+
 
 ## Introduction
 
@@ -212,6 +214,7 @@
      "message": "String",
      "content": {
        "_id": "ObjectId",
+       "new": "Boolean",
        "name": "String",
        "email": "String",
        "nickname": "String",
@@ -315,6 +318,7 @@
      "message": "String",
      "content": {
        "_id": "ObjectId",
+       "new": "Boolean",
        "name": "String",
        "email": "String",
        "nickname": "String",
