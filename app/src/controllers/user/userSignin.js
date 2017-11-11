@@ -6,20 +6,28 @@ export default ({
 }) => (
   async (req, res) => {
     try {
-      const pre = Object
-        .keys({
+      const identifier = Object
+        .entries({
           name: req.body.name,
           email: req.body.email,
-          password: req.body.password,
         })
-        .filter(key => !!req.body[key])
-        .reduce((object, key) => ({
-          ...object,
-          [key]: req.body[key],
-        }), {});
+        .reduce((obj, [key, value]) => {
+          if (!value) {
+            return obj;
+          }
+          return {
+            ...obj,
+            [key]: value,
+          }
+        }, {});
 
-      if (!pre.name && !pre.email) {
+      if (!identifier.name && !identifier.email) {
         throw configs.response.emptyCredential;
+      }
+
+      const pre = {
+        ...identifier,
+        password: req.body.password,
       }
 
       const body = await verifier.user(pre);
