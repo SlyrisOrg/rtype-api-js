@@ -275,11 +275,8 @@
   "Request":
    ```json
    {
-     "nickname": "String",
-     "icon": "Number",
-     "profile": {
-       "faction": "Number"
-     }
+      "nickname": "String",
+      "faction": "Number"
    }
    ```
 

@@ -11,8 +11,8 @@ export default ({
       });
 
       const profile = await verifier.profile({
-        faction: req.body.profile && req.body.profile.faction,
-        ship: req.body.profile && req.body.profile.faction,
+        faction: req.body.faction,
+        ship: req.body.faction,
       });
 
       const body = {
