@@ -26,7 +26,7 @@ export default ({
     }, {
       nickname: true,
     });
-console.log(nickname)
+
     if (notAvailableData) {
       if (notAvailableData.nickname === nickname) {
         throw configs.response.alreadyTakenNickname;
@@ -43,6 +43,7 @@ console.log(nickname)
       profile: {
         level: 1,
         faction: profile.faction,
+        ship: profile.ship,
         experience: 0,
       },
     };
