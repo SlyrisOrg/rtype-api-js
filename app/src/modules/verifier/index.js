@@ -1,7 +1,7 @@
 import userVerifier from "./user";
-import allVerify from "./all";
+import profileVerifier from "./profile";
 
 export default deps => ({
-  all: allVerify(deps),
   user: userVerifier(deps),
+  profile: profileVerifier(deps),
 });

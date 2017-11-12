@@ -2,9 +2,7 @@ export default ({
   configs,
   mongo,
 }, client) => (
-  async (id, {
-    nickname, name, email, profile,
-  }) => {
+  async (id, body) => {
     const db = await client;
     const col = await db.collection(configs.database.mongo.collections.users);
     const user = await col.findOne({
@@ -15,11 +13,11 @@ export default ({
 
     // Check if available data
 
-    const availableData = await col.findOne({
+    const notAvailableData = await col.findOne({
       $or: [
-        { nickname },
-        { name },
-        { email },
+        { nickname: body.nickname },
+        { name: body.name },
+        { email: body.email },
       ],
     }, {
       nickname: true,
@@ -27,30 +25,31 @@ export default ({
       email: true,
     });
 
-    if (availableData) {
-      if (availableData.nickname === nickname) {
+    if (notAvailableData) {
+      if (notAvailableData.nickname === body.nickname) {
         throw configs.response.alreadyTakenNickname;
       }
 
-      if (availableData.name === name) {
+      if (notAvailableData.name === body.name) {
         throw configs.response.alreadyTakenName;
       }
 
-      if (availableData.email === email) {
+      if (notAvailableData.email === body.email) {
         throw configs.response.alreadyTakenEmail;
       }
     }
 
     // Send current user data to database
 
+    const newProfileData = {
+      ...user.profile,
+      ...body.profile,
+    };
+
     const newUserData = {
       ...user,
-      profile: {
-        level: profile.level,
-        faction: profile.faction,
-        experience: profile.experience,
-        idIcon: profile.idIcon,
-      },
+      ...body,
+      profile: newProfileData,
     };
 
     await col.findOneAndUpdate({

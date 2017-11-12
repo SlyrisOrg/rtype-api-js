@@ -123,6 +123,38 @@
     "payload": "502",
     "message": "Bad password format",
   },
+  "emptyLevel": {
+    "payload": 1201,
+    "message": "Empty level",
+  },
+  "badFormatLevel": {
+    "payload": 1202,
+    "message": "Bad level format",
+  },
+  "emptyFaction": {
+    "payload": 1301,
+    "message": "Empty faction",
+  },
+  "badFormatFaction": {
+    "payload": 1302,
+    "message": "Bad faction format",
+  },
+  "emptyExperience": {
+    "payload": 1401,
+    "message": "Empty experience",
+  },
+  "badFormatExperience": {
+    "payload": 1402,
+    "message": "Bad experience format",
+  },
+  "emptyIcon": {
+    "payload": 1501,
+    "message": "Empty icon",
+  },
+  "badFormatIcon": {
+    "payload": 1502,
+    "message": "Bad icon format",
+  },
 
   "readUserData": {
     "payload": "601",
@@ -243,7 +275,11 @@
   "Request":
    ```json
    {
-     "nickname": "String"
+     "nickname": "String",
+     "icon": "Number",
+     "profile": {
+       "faction": "Number"
+     }
    }
    ```
 
@@ -275,7 +311,15 @@
   "Request":
    ```json
    {
-     "nickname": "String"
+    "name": "String?",
+    "email": "String?",
+    "nickname": "String?",
+    "icon": "Number?",
+    "profile": {
+      "level": "Number?",
+      "experience": "Number?",
+      "faction": "Number?",
+    },
    }
    ```
 
@@ -318,13 +362,13 @@
      "payload": "Number",
      "message": "String",
      "content": {
-       "_id": "ObjectId",
-       "new": "Boolean",
-       "name": "String",
-       "email": "String",
-       "nickname": "String",
+        "_id": "ObjectId",
+        "new": "Boolean",
+        "name": "String",
+        "email": "String",
+        "nickname": "String",
+        "icon": "Number",
         "profile": {
-          "icon": "Number",
           "level": "Number",
           "experience": "Number",
           "faction": "Number",
@@ -336,7 +380,7 @@
 
 **[⬆ back to top](#table-of-contents)**
 
-## User Read
+## User Delete
 
   <a name="user--crud_delete"></a><a name="1.6"></a>
   - [1.1](#user--crud_delete) **Delete**: "Delete" user

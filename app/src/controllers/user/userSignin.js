@@ -37,7 +37,7 @@ export default ({
         content: user,
       });
     } catch (err) {
-      logger.error("Signin controller", err);
+      logger.error("Signin controller:", err, err.stack);
       res.render("error", err);
     }
   }

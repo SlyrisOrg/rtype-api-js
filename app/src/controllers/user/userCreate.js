@@ -5,11 +5,24 @@ export default ({
 }) => (
   async (req, res) => {
     try {
-      await verifier.all(req.body);
-      await database.createUserData(req.user, req.body);
+      const user = await verifier.user({
+        nickname: req.body.nickname,
+        icon: req.body.icon,
+      });
+
+      const profile = await verifier.profile({
+        faction: req.body.profile && req.body.profile.faction,
+      });
+
+      const body = {
+        ...user,
+        profile,
+      };
+
+      await database.createUserData(req.user, body);
       res.render("success");
     } catch (err) {
-      logger.error("User create controller", err);
+      logger.error("User create controller:", err, err.stack);
       res.render("error", err);
     }
   }

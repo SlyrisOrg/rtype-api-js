@@ -71,6 +71,38 @@ export default () => ({
     payload: 502,
     message: "Bad password format",
   },
+  emptyLevel: {
+    payload: 1201,
+    message: "Empty level",
+  },
+  badFormatLevel: {
+    payload: 1202,
+    message: "Bad level format",
+  },
+  emptyFaction: {
+    payload: 1301,
+    message: "Empty faction",
+  },
+  badFormatFaction: {
+    payload: 1302,
+    message: "Bad faction format",
+  },
+  emptyExperience: {
+    payload: 1401,
+    message: "Empty experience",
+  },
+  badFormatExperience: {
+    payload: 1402,
+    message: "Bad experience format",
+  },
+  emptyIcon: {
+    payload: 1501,
+    message: "Empty icon",
+  },
+  badFormatIcon: {
+    payload: 1502,
+    message: "Bad icon format",
+  },
 
   readUserData: {
     payload: 601,
