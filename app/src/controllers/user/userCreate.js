@@ -7,7 +7,7 @@ export default ({
     try {
       const user = await verifier.user({
         nickname: req.body.nickname,
-        icon: req.body.icon,
+        icon: req.body.faction,
       });
 
       const profile = await verifier.profile({
