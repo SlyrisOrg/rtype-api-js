@@ -6,7 +6,7 @@ export default ({
       throw configs.response.emptyFaction;
     }
 
-    if (typeof faction !== 'number') {
+    if (typeof faction !== "number") {
       throw configs.response.badFormatFaction;
     }
 

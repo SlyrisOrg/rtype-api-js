@@ -1,3 +1,3 @@
-/node_module/**
-/dist/**
-/test/**
+**/node_module/**
+**/dist/**
+**/test/**

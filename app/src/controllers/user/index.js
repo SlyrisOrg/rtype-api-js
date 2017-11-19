@@ -46,7 +46,7 @@ export default deps => (
       userCreateController(deps),
     );
 
-    router.post(
+    router.delete(
       "/",
       verifyTokenMiddleware(deps),
       userDeleteController(deps),
