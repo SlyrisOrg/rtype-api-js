@@ -2,14 +2,11 @@ import userVerifier from "./user";
 import profileVerifier from "./profile";
 import shipVerifier from "./ship";
 
-const allVerifier = (data) => {
-  const user = await userVerifier(deps)(data);
-  return {
-    ...user,
-    profile: await profileVerifier(deps)(data.profile),
-    ship: await shipVerifier(deps)(data.ship),
-  }
-};
+const allVerifier = async (data) => ({
+  ...await userVerifier(deps)(data),
+  profile: await profileVerifier(deps)(data.profile),
+  ship: await shipVerifier(deps)(data.ship),
+});
 
 export default deps => ({
   all: allVerifier(deps),
