@@ -43,7 +43,7 @@ export default ({
       profile: {
         level: 1,
         faction: profile.faction,
-        ship: profile.ship,
+        ship: profile.faction,
         experience: 0,
       },
     };
