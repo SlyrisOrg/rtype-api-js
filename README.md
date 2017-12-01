@@ -6,7 +6,7 @@
 
 > **Default auth key**: eAVZepqfXsrSW6LVjTuqb3W3CHsf9mAUa5776cGZ2hLGzztK4PAT5gkJE52h
 
-> **Postman exemples**: https://www.getpostman.com/collections/0a4da5518fb998c728f5eAVZepqfXsrSW6LVjTuqb3W3CHsf9mAUa5776cGZ2hLGzztK4PAT5gkJE52h
+> **Postman exemples**: https://www.getpostman.com/collections/df916af916e378b1cccb
 
 ## Introduction
 
