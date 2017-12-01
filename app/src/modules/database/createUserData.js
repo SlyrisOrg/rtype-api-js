@@ -1,3 +1,32 @@
+const getShipStats = (factionId) => {
+  switch(factionId) {
+    case 0: {
+      return {
+        health: 1000,
+        defense: 100,
+        attack: 150,
+        moveSpeed: 100,
+      };
+    }
+    case 1: {
+      return {
+        health: 1500,
+        defense: 180,
+        attack: 150,
+        moveSpeed: 80,
+      };
+    }
+    case 2: {
+      return {
+        health: 1250,
+        defense: 150,
+        attack: 50,
+        moveSpeed: 150,
+      }
+    }
+  }
+}
+
 export default ({
   configs,
   mongo,
@@ -35,6 +64,9 @@ export default ({
       }
     }
 
+    // Init ship
+    const ship = getShipStats(profile.faction);
+
     // Create data
 
     const newUserData = {
@@ -45,10 +77,13 @@ export default ({
       profile: {
         level: 1,
         faction: profile.faction,
-        ship: profile.ship,
         experience: 0,
       },
-      availableIcons: [0, 1]
+      ship: {
+        id: profile.ship,
+        ...ship
+      },
+    availableIcons: [0, 1]
     };
 
     await col.findOneAndUpdate({
