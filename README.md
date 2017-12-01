@@ -6,6 +6,7 @@
 
 > **Default auth key**: eAVZepqfXsrSW6LVjTuqb3W3CHsf9mAUa5776cGZ2hLGzztK4PAT5gkJE52h
 
+> **Postman exemples**: https://www.getpostman.com/collections/0a4da5518fb998c728f5eAVZepqfXsrSW6LVjTuqb3W3CHsf9mAUa5776cGZ2hLGzztK4PAT5gkJE52h
 
 ## Introduction
 
@@ -15,13 +16,24 @@
 {
   "_id": "ObjectId",
   "new": "Boolean",
+
   "name": "String",
   "email": "String",
-  "password": "String",
+  "nickname": "String",
 
   "profile": {
+    "icon": "Number",
     "level": "Number",
-    "gold": "Number"
+    "gold": "Number",
+    "experience": "Number",
+    "faction": "Number",
+  },
+
+  "ship": {
+    "health": "Number",
+    "defense": "Number",
+    "attack": "Number",
+    "moveSpeed": "Number",
   }
 }
 ```
@@ -210,18 +222,6 @@
    }
    ```
 
-   "Response":
-   ```json
-   {
-     "id": "String",
-     "success": "Boolean",
-     "payload": "Number",
-     "message": "String",
-     "content": "Object",
-     "timestamp": "Date"
-   }
-   ```
-
 **[⬆ back to top](#table-of-contents)**
 
 ## User Signup
@@ -239,31 +239,6 @@
      "name": "String?",
      "email": "String?",
      "password": "String"
-   }
-   ```
-
-   "Response":
-   ```json
-   {
-     "id": "String",
-     "success": "Boolean",
-     "payload": "Number",
-     "message": "String",
-     "content": {
-       "_id": "ObjectId",
-       "new": "Boolean",
-       "name": "String",
-       "email": "String",
-       "nickname": "String",
-        "profile": {
-          "icon": "Number",
-          "level": "Number",
-          "experience": "Number",
-          "faction": "Number",
-        },
-       "token": "String"
-     },
-     "timestamp": "Date"
    }
    ```
 
@@ -288,18 +263,6 @@
 
   > **Note**: "this" data structure is a model of how to do, the api give access to all user field be carefull to do not override any field without reason.
 
-   "Response":
-   ```json
-   {
-     "id": "String",
-     "success": "Boolean",
-     "payload": "Number",
-     "message": "String",
-     "content": "Object",
-     "timestamp": "Date"
-   }
-   ```
-
 **[⬆ back to top](#table-of-contents)**
 
 ## User Update
@@ -312,25 +275,6 @@
   "Request":
    ```json
    {
-    "name": "String?",
-    "email": "String?",
-    "nickname": "String?",
-    "icon": "Number?",
-    "profile": {
-      "level": "Number?",
-      "experience": "Number?",
-      "faction": "Number?",
-    },
-   }
-   ```
-
-  > **Flag**: "token" needed.
-
-  > **Note**: "this" data structure is a model of how to do, the api give access to all user field be carefull to do not override any field without reason.
-
-   "Response":
-   ```json
-   {
      "id": "String",
      "success": "Boolean",
      "payload": "Number",
@@ -339,6 +283,10 @@
      "timestamp": "Date"
    }
    ```
+
+  > **Flag**: "token" needed.
+
+  > **Note**: "this" data structure is a model of how to do, the api give access to all user field be carefull to do not override any field without reason.
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -355,30 +303,6 @@
 
   > **Flag**: "token" needed.
 
-   "Response":
-   ```json
-   {
-     "id": "String",
-     "success": "Boolean",
-     "payload": "Number",
-     "message": "String",
-     "content": {
-        "_id": "ObjectId",
-        "new": "Boolean",
-        "name": "String",
-        "email": "String",
-        "nickname": "String",
-        "icon": "Number",
-        "profile": {
-          "level": "Number",
-          "experience": "Number",
-          "faction": "Number",
-        },
-     },
-     "timestamp": "Date"
-   }
-   ```
-
 **[⬆ back to top](#table-of-contents)**
 
 ## User Delete
@@ -393,17 +317,5 @@
    ```
 
   > **Flag**: "token" needed.
-
-   "Response":
-   ```json
-   {
-     "id": "String",
-     "success": "Boolean",
-     "payload": "Number",
-     "message": "String",
-     "content": "Object",
-     "timestamp": "Date"
-   }
-   ```
 
 **[⬆ back to top](#table-of-contents)**

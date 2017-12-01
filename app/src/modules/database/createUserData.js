@@ -76,6 +76,7 @@ export default ({
       icon,
       profile: {
         level: 1,
+        gold: 1000,
         faction: profile.faction,
         experience: 0,
       },
