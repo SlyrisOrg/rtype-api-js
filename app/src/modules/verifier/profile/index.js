@@ -2,7 +2,6 @@ import isProfileExperienceVerifier from "./isProfileExperience";
 import isProfileFactionVerifier from "./isProfileFaction";
 import isProfileLevelVerifier from "./isProfileLevel";
 import isProfileGoldVerifier from "./isProfileGold";
-import isProfileShipVerifier from "./isProfileShip";
 
 export default deps => (
   async (inputs) => {
@@ -19,8 +18,6 @@ export default deps => (
             return isProfileLevelVerifier(deps)(input);
           case "gold":
             return isProfileLevelVerifier(deps)(input);
-          case "ship":
-            return isProfileShipVerifier(deps)(input);
           default:
             return null;
         }
