@@ -261,8 +261,6 @@
 
   > **Flag**: "token" needed.
 
-  > **Note**: "this" data structure is a model of how to do, the api give access to all user field be carefull to do not override any field without reason.
-
 **[⬆ back to top](#table-of-contents)**
 
 ## User Update
@@ -270,17 +268,10 @@
   <a name="user--crud_update"></a><a name="1.4"></a>
   - [1.1](#user--crud_update) **Update**: "Update" current data of a user
 
-  "nickname": "between" 1 and 25 characters.
-
   "Request":
    ```json
    {
-     "id": "String",
-     "success": "Boolean",
-     "payload": "Number",
-     "message": "String",
-     "content": "Object",
-     "timestamp": "Date"
+     ...user
    }
    ```
 
