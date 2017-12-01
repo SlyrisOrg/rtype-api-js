@@ -80,7 +80,7 @@ export default ({
         experience: 0,
       },
       ship: {
-        id: profile.ship,
+        id: profile.faction,
         ...ship
       },
     availableIcons: [0, 1]
