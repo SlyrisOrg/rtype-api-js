@@ -46,6 +46,10 @@ export default ({
       ...body.profile,
     };
 
+    if (!user.availableIcons.find(avalableIcon => avalableIcon === user.icon)) {
+      throw configs.response.unavailableIcon;
+    }
+
     const newUserData = {
       ...user,
       ...body,

@@ -3,7 +3,9 @@ export default ({
   mongo,
 }, client) => (
   async (id, {
-    nickname, icon, profile,
+    nickname,
+    icon,
+    profile,
   }) => {
     const db = await client;
     const col = await db.collection(configs.database.mongo.collections.users);
@@ -43,9 +45,10 @@ export default ({
       profile: {
         level: 1,
         faction: profile.faction,
-        ship: profile.faction,
+        ship: profile.ship,
         experience: 0,
       },
+      availableIcons: [0, 1]
     };
 
     await col.findOneAndUpdate({

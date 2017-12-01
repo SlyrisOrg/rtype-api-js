@@ -1,7 +1,7 @@
 export default () => ({
   success: {
     payload: 0,
-    message: "Requrest success",
+    message: "Request success",
   },
   notFound: {
     payload: 101,
@@ -102,6 +102,10 @@ export default () => ({
   badFormatIcon: {
     payload: 1502,
     message: "Bad icon format",
+  },
+  unavailableIcon: {
+    payload: 1503,
+    message: "Unavailable icon",
   },
 
   readUserData: {
