@@ -43,6 +43,12 @@ import controllers from "./controllers";
 // INITIALE MODULES //
 // //////////////// //
 
+const varDirPath = path.join(process.cwd(), "var");
+
+if (!fs.existsSync(varDirPath)) {
+  fs.mkdirSync(varDirPath);
+}
+
 const configs = configsModule();
 
 const logger = loggerModule({
@@ -85,12 +91,6 @@ process.on("unhandledRejection", (reason, p) => {
 const app = express();
 
 try {
-  const varDirPath = path.join(process.cwd(), "var");
-
-  if (!fs.existsSync(varDirPath)) {
-    fs.mkdirSync(varDirPath);
-  }
-
   // /////// //
   // ENGINES //
   // /////// //
