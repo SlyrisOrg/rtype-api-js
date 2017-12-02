@@ -85,7 +85,8 @@ export default ({
         ...ship
       },
       availableIcons: [
-        profile.faction
+        profile.faction,
+        profile.faction + 3
       ]
     };
 
