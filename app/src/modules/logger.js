@@ -15,8 +15,16 @@ export default ({
     colorize: !configs.server.production,
   });
 
+  const fileLogger = new winston.transports.File({
+    filename: 'combined.log',
+    level: "error",
+  });
+
   return new winston.Logger({
-    transports: [consoleLogger],
+    transports: [
+      consoleLogger,
+      fileLogger
+    ],
     exitOnError: false,
   });
 };
