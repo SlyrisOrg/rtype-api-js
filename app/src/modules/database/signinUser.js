@@ -1,4 +1,4 @@
-import { getFactionName } from "../faction";
+import { getFactionName, getShipStats } from "../faction";
 
 export default ({
   configs,
@@ -44,12 +44,26 @@ export default ({
       return currentUserData;
     }
 
+    if (!user.ship || !user.ship.id) {
+      return {
+        ...currentUserData,
+        profile: {
+          ...securedData.profile,
+          id: getFactionName(user.profile.id),
+        },
+      }
+    }
+
     return {
       ...currentUserData,
       profile: {
         ...securedData.profile,
         id: getFactionName(user.profile.id),
       },
+      ship: {
+        ...securedData.ship,
+        id: getShipStats(user.ship.id),
+      }
     }
   }
 );
