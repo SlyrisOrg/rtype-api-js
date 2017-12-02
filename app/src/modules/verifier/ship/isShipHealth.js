@@ -10,7 +10,7 @@ export default ({
       throw configs.response.badFormatHealth;
     }
 
-    if (moveSpeed > 10000) {
+    if (support > 10000) {
       throw configs.response.badFormatHealth;
     }
 

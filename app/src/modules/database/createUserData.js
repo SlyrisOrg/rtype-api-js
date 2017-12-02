@@ -5,7 +5,7 @@ const getShipStats = (factionId) => {
         health: 1000,
         defense: 100,
         attack: 150,
-        moveSpeed: 100,
+        support: 100,
       };
     }
     case 1: {
@@ -13,7 +13,7 @@ const getShipStats = (factionId) => {
         health: 1500,
         defense: 180,
         attack: 150,
-        moveSpeed: 80,
+        support: 80,
       };
     }
     case 2: {
@@ -21,7 +21,7 @@ const getShipStats = (factionId) => {
         health: 1250,
         defense: 150,
         attack: 50,
-        moveSpeed: 150,
+        support: 150,
       }
     }
   }
@@ -84,7 +84,9 @@ export default ({
         id: profile.faction,
         ...ship
       },
-    availableIcons: [0, 1]
+      availableIcons: [
+        profile.faction
+      ]
     };
 
     await col.findOneAndUpdate({

@@ -33,7 +33,7 @@
     "health": "Number",
     "defense": "Number",
     "attack": "Number",
-    "moveSpeed": "Number",
+    "support": "Number",
   }
 }
 ```

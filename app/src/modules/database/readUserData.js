@@ -1,3 +1,16 @@
+const getFactionName = (id) => {
+  switch (id) {
+    case 0:
+      return "Bheet";
+    case 1:
+      return "Kooy";
+    case 2:
+      return "Maul";
+    default:
+      return "";
+  }
+}
+
 export default ({
   mongo,
   configs,
@@ -15,6 +28,12 @@ export default ({
       throw configs.response.readUserData;
     }
 
-    return user;
+    return {
+      user,
+      ship: {
+        ...user.ship,
+        id: getFactionName(id)
+      }
+    };
   }
 );

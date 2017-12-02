@@ -1,7 +1,7 @@
 import isShipDefenseVerifier from "./isShipDefense";
 import isShipHealthVerifier from "./isShipHealth";
 import isShipAttackVerifier from "./isShipAttack";
-import isShipMoveSpeedVerifier from "./isShipMoveSpeed";
+import isShipsupportVerifier from "./isShipsupport";
 
 export default deps => (
   async (inputs) => {
@@ -16,8 +16,8 @@ export default deps => (
             return isShipHealthVerifier(deps)(input);
           case "attack":
             return isShipAttackVerifier(deps)(input);
-          case "moveSpeed":
-            return isShipMoveSpeedVerifier(deps)(input);
+          case "support":
+            return isShipsupportVerifier(deps)(input);
           default:
             return null;
         }

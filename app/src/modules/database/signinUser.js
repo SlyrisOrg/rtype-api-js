@@ -1,3 +1,16 @@
+const getFactionName = (id) => {
+  switch (id) {
+    case 0:
+      return "Bheet";
+    case 1:
+      return "Kooy";
+    case 2:
+      return "Maul";
+    default:
+      return "";
+  }
+}
+
 export default ({
   configs,
   bcrypt,
@@ -36,6 +49,10 @@ export default ({
     return {
       ...securedData,
       token,
+      profile: {
+        ...securedData.profile,
+        id: getFactionName(user.profile.id)
+      }
     };
   }
 );
