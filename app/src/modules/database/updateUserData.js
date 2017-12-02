@@ -24,7 +24,7 @@ export default ({
       name: true,
       email: true,
     });
-console.log(notAvailableData)
+
     if (notAvailableData) {
       if (notAvailableData.nickname === body.nickname) {
         throw configs.response.alreadyTakenNickname;
