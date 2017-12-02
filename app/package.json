@@ -18,7 +18,7 @@
     "lint": "eslint src --fix",
     "test": "jest test",
     "clear": "rimraf dist",
-    "build": "babel src -d dist --copy-files"
+		"build": "babel src -d dist --copy-files"
   },
   "dependencies": {
     "bcrypt": "^1.0.3",

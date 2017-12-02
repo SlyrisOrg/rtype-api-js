@@ -40,7 +40,7 @@ export default ({
       token,
     };
 
-    if (!user.profile.id) {
+    if (!user.profile || !user.profile.id) {
       return currentUserData;
     }
 
