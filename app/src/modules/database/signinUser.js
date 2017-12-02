@@ -35,12 +35,15 @@ export default ({
 
     const { password, ...securedData } = user;
 
+    if (id) {
+      securedData.id = getFactionName(user.profile.id)
+    }
+
     return {
       ...securedData,
       token,
       profile: {
         ...securedData.profile,
-        id: getFactionName(user.profile.id)
       }
     };
   }
