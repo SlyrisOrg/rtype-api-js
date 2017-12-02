@@ -18,9 +18,7 @@ export default ({
     }
 
     if (!user.ship || !user.ship.id) {
-      return {
-        ...user
-      };
+      return user;
     }
 
     return {

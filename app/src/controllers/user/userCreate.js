@@ -23,7 +23,7 @@ export default ({
       await database.createUserData(req.user, body);
       res.render("success");
     } catch (err) {
-      logger.error("User create controller:", err);
+      logger.error("User create controller:", err, err.stack);
       res.render("error", err);
     }
   }

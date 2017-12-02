@@ -10,12 +10,12 @@ export default ({
         password: req.body.password,
         email: req.body.email,
       });
-console.log(body)
+
       await database.signupUser(body);
 
       res.render("success");
     } catch (err) {
-      logger.error("Signup controller:", err);
+      logger.error("Signup controller:", err, err.stack);
       res.render("error", err);
     }
   }
