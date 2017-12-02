@@ -47,6 +47,7 @@ export default ({
       profile: {
         level: 1,
         gold: 1000,
+        goldShop: 0,
         faction: profile.faction,
         experience: 0,
       },
