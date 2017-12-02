@@ -9,7 +9,7 @@ const factionConfig = [
     },
   },
   {
-    name: "",
+    name: "Kooy",
     stats: {
       health: 1500,
       defense: 180,
@@ -18,7 +18,7 @@ const factionConfig = [
     },
   },
   {
-    name: "",
+    name: "Maul",
     stats: {
       health: 1250,
       defense: 150,
