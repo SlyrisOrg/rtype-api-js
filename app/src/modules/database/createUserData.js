@@ -1,31 +1,4 @@
-const getShipStats = (factionId) => {
-  switch(factionId) {
-    case 0: {
-      return {
-        health: 1000,
-        defense: 100,
-        attack: 150,
-        support: 100,
-      };
-    }
-    case 1: {
-      return {
-        health: 1500,
-        defense: 180,
-        attack: 150,
-        support: 80,
-      };
-    }
-    case 2: {
-      return {
-        health: 1250,
-        defense: 150,
-        attack: 50,
-        support: 150,
-      }
-    }
-  }
-}
+import { getShipStats } from "../faction";
 
 export default ({
   configs,

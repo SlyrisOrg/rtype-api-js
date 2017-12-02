@@ -1,15 +1,4 @@
-const getFactionName = (id) => {
-  switch (id) {
-    case 0:
-      return "Bheet";
-    case 1:
-      return "Kooy";
-    case 2:
-      return "Maul";
-    default:
-      return "";
-  }
-}
+import { getFactionName } from "../faction";
 
 export default ({
   configs,
