@@ -45,6 +45,7 @@ import controllers from "./controllers";
 const configs = configsModule();
 
 const logger = loggerModule({
+  path,
   winston,
   configs,
 });

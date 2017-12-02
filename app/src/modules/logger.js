@@ -1,4 +1,5 @@
 export default ({
+  path,
   winston,
   configs,
 }) => {
@@ -16,7 +17,7 @@ export default ({
   });
 
   const fileLogger = new winston.transports.File({
-    filename: 'combined.log',
+    filename: path.resolve(process.cwd(), "var"," log", "combined.log"),
     level: "error",
   });
 
