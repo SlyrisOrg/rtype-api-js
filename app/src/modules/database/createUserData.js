@@ -51,8 +51,8 @@ export default ({
         experience: 0,
       },
       ship: {
-        ...user.ship,
-        name: getShipStats(user.ship.id),
+        id: profile.faction,
+        name: getShipStats(profile.faction),
       },
       availableIcons: [
         profile.faction,
