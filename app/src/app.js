@@ -68,7 +68,7 @@ process.on("SIGTERM", () => {
   process.exit(0);
 });
 process.on("uncaughtException", (err) => {
-  logger.error("Caught exception:", err, err.stack);
+  logger.error("Caught exception:", err);
   process.exit(1);
 });
 process.on("unhandledRejection", (reason, p) => {
@@ -167,7 +167,7 @@ try {
     logger.info("Application listening on", bind);
   });
 } catch (err) {
-  logger.error("Application failure:", err, err.stack);
+  logger.error("Application failure:", err);
   mailer.alert(err);
 }
 

@@ -10,7 +10,7 @@ export default ({
         content: data,
       });
     } catch (err) {
-      logger.error("User read controller:", err, err.stack);
+      logger.error("User read controller:", err);
       res.render("error", err);
     }
   }

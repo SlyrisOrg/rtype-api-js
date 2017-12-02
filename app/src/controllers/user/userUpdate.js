@@ -9,7 +9,7 @@ export default ({
       await database.updateUserData(req.user, req.body);
       res.render("success");
     } catch (err) {
-      logger.error("User update controller:", err, err.stack);
+      logger.error("User update controller:", err);
       res.render("error", err);
     }
   }

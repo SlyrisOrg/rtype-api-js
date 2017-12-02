@@ -15,7 +15,7 @@ console.log(body)
 
       res.render("success");
     } catch (err) {
-      logger.error("Signup controller:", err, err.stack);
+      logger.error("Signup controller:", err);
       res.render("error", err);
     }
   }
