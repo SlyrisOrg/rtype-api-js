@@ -3,10 +3,6 @@ export default ({
   configs,
 }) => (
   async (icon) => {
-    if (!icon) {
-      throw configs.response.emptyIcon;
-    }
-
     if (typeof icon !== 'number') {
       throw configs.response.badFormatIcon;
     }
