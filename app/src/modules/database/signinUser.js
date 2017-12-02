@@ -35,16 +35,21 @@ export default ({
 
     const { password, ...securedData } = user;
 
-    if (id) {
-      securedData.id = getFactionName(user.profile.id)
+    const currentUserData = {
+      ...securedData,
+      token,
+    };
+
+    if (!id) {
+      return currentUserData;
     }
 
     return {
-      ...securedData,
-      token,
+      ...currentUserData,
       profile: {
         ...securedData.profile,
-      }
-    };
+        id: getFactionName(user.profile.id),
+      },
+    }
   }
 );
