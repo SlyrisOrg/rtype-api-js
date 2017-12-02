@@ -85,7 +85,7 @@ process.on("unhandledRejection", (reason, p) => {
 const app = express();
 
 try {
-  const varDirPath = path.resolve(process.cwd(), "var");
+  const varDirPath = path.join(process.cwd(), "var");
 
   if (!fs.existsSync(varDirPath)) {
     fs.mkdirSync(varDirPath);

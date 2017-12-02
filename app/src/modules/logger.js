@@ -17,8 +17,8 @@ export default ({
     colorize: !configs.server.production,
   });
 
-  const logDirPath = path.resolve(process.cwd(), "var"," log");
-  const logFilePath = path.resolve(logDirPath, "combined.log");
+  const logDirPath = path.join(process.cwd(), "var","log");
+  const logFilePath = path.join(logDirPath, "combined.log");
 
   if (!fs.existsSync(logDirPath)) {
     fs.mkdirSync(logDirPath);
