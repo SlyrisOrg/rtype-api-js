@@ -24,7 +24,7 @@ export default ({
       name: true,
       email: true,
     });
-
+console.log(notAvailableData)
     if (notAvailableData) {
       if (notAvailableData.nickname === body.nickname) {
         throw configs.response.alreadyTakenNickname;
@@ -46,6 +46,11 @@ export default ({
       ...body.profile,
     };
 
+    const newShipData = {
+      ...user.ship,
+      ...body.ship,
+    };
+
     if (!user.availableIcons.find(avalableIcon => avalableIcon === user.icon)) {
       throw configs.response.unavailableIcon;
     }
@@ -54,6 +59,7 @@ export default ({
       ...user,
       ...body,
       profile: newProfileData,
+      ship: newShipData,
     };
 
     await col.findOneAndUpdate({
