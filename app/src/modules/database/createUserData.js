@@ -38,7 +38,7 @@ export default ({
     }
 
     // Init ship
-    const ship = getShipStats(profile.faction);
+    const ship = getShipStats(profile.faction.id);
 
     // Create data
 

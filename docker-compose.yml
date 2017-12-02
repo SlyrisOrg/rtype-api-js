@@ -12,11 +12,11 @@ services:
       - SECRET=6fsY4I9XDvrzZkdE5L5vbvBJpmMZ6GSEVt5EVGYvBXE4vu5BpgqQyfuBdObE
       - MAILER_USER=unity.shikalegend@gmail.com
       - MAILER_PASS=234567890
-    volumes:
-      - ./database/data/db:/data/db
-      - ./database/data/configdb:/data/configdb
     restart: always
 
   database:
     image: mongo
+    volumes:
+      - ./database/data/db:/data/db
+      - ./database/data/configdb:/data/configdb
     restart: always

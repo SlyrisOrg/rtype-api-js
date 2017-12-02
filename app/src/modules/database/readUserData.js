@@ -17,11 +17,17 @@ export default ({
       throw configs.response.readUserData;
     }
 
+    if (!user.ship || !user.ship.id) {
+      return {
+        ...user
+      };
+    }
+
     return {
-      user,
+      ...user,
       ship: {
         ...user.ship,
-        id: getFactionName(id)
+        id: getFactionName(user.ship.id)
       }
     };
   }
