@@ -1,4 +1,5 @@
 export default ({
+  fs,
   path,
   winston,
   configs,
@@ -16,8 +17,14 @@ export default ({
     colorize: !configs.server.production,
   });
 
+  const logFilePath = path.resolve(process.cwd(), "var"," log", "combined.log");
+
+  if (!fs.existsSync(logFilePath)) {
+    fs.mkdirSync(logFilePath);
+  }
+
   const fileLogger = new winston.transports.File({
-    filename: path.resolve(process.cwd(), "var"," log", "combined.log"),
+    filename: logFilePath,
     level: "error",
   });
 
