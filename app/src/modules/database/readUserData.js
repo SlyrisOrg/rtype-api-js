@@ -17,10 +17,10 @@ export default ({
       throw configs.response.readUserData;
     }
 
-    console.log(user)
     if (!user.ship || !user.ship.id) {
       return user;
     }
+
     return {
       ...user,
       ship: {

@@ -35,7 +35,7 @@ export const getShipStats = (factionId) => {
   return {};
 };
 
-export const getFactionName = (ifactionId) => {
+export const getFactionName = (factionId) => {
   if (factionConfig[factionId]) {
     return factionConfig[factionId].name;
   }
