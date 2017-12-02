@@ -25,7 +25,7 @@ export default ({
       ...user,
       ship: {
         ...user.ship,
-        id: getFactionName(user.ship.id)
+        name: getFactionName(user.ship.id)
       }
     };
   }

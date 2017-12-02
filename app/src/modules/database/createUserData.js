@@ -37,9 +37,6 @@ export default ({
       }
     }
 
-    // Init ship
-    const ship = getShipStats(profile.faction.id);
-
     // Create data
 
     const newUserData = {
@@ -54,8 +51,8 @@ export default ({
         experience: 0,
       },
       ship: {
-        id: profile.faction,
-        ...ship
+        ...user.ship,
+        name: getShipStats(user.ship.id),
       },
       availableIcons: [
         profile.faction,

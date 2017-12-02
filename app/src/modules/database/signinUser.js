@@ -58,11 +58,11 @@ export default ({
       ...currentUserData,
       profile: {
         ...securedData.profile,
-        id: getFactionName(user.profile.id),
+        name: getFactionName(user.profile.id),
       },
       ship: {
         ...securedData.ship,
-        id: getShipStats(user.ship.id),
+        name: getShipStats(user.ship.id),
       }
     }
   }
