@@ -224,7 +224,7 @@
 
 **[⬆ back to top](#table-of-contents)**
 
-## User Signup
+## User Signin
 
   <a name="user--connection_signin"></a><a name="1.2"></a>
   - [1.1](#user--connection_signin) **Signin**: "Sigin" user and get a 48 hours valid token
